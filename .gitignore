@@ -1,0 +1,8 @@
+*~
+*.class
+dockfx.jar
+dockfxdemo.jar
+*.jar
+*.db
+.git/modules
+/bin
