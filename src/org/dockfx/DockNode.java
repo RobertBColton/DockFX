@@ -3,7 +3,7 @@
  * @brief Class implementing basic dock node with floating and styling.
  *
  * @section License
- * 
+ *
  *          This file is a part of the DockFX Library. Copyright (C) 2015 Robert B. Colton
  *
  *          This program is free software: you can redistribute it and/or modify it under the terms

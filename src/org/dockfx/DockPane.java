@@ -3,7 +3,7 @@
  * @brief Class implementing a generic dock pane for the layout of dock nodes.
  *
  * @section License
- * 
+ *
  *          This file is a part of the DockFX Library. Copyright (C) 2015 Robert B. Colton
  *
  *          This program is free software: you can redistribute it and/or modify it under the terms
