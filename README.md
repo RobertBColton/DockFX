@@ -7,7 +7,7 @@
 </table>
 
 ## About
-This library was created to fill the void for docking frameworks available in the JavaFX RIA platform. Its intention is to provide you with a fully featured docking library. This project and its source code is licensed under the [GNU Lesser General Public License version 3](http://www.gnu.org/licenses/gpl-3.0.en.html) and you should feel free to make adaptations of this work. Please see the included LICENSE file for further details.
+This library was created to fill the void for docking frameworks available in the JavaFX RIA platform. Its intention is to provide you with a fully featured docking library. This project and its source code is licensed under the [GNU Lesser General Public License version 3](http://www.gnu.org/licenses/lgpl-3.0.en.html) and you should feel free to make adaptations of this work. Please see the included LICENSE file for further details.
 
 <img src="http://i.imgur.com/b2Oouif.png">
 
