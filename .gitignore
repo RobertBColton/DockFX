@@ -1,5 +1,7 @@
 *~
 *.class
+*.classpath
+*.project
 dockfx.jar
 dockfxdemo.jar
 *.jar
