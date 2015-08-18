@@ -24,7 +24,7 @@ Features to be added in a to be determined future version:
 * A light docking library using no detachable windows
 
 ## Using the Library
-You can obtain a binary of the latest jar from the [releases](https://github.com/RobertBColton/DockFX/releases) page. The library itself includes a demo as the main class for testing purposes. This demo is always included for the time being as it is very small and not expected to get much bigger. An HTML readme file is included next to the jar but does not need to be distributed with the library. The library and the demo will also work regardless of whether the readme HTML file exists.
+You can obtain a binary of the latest jar from the [releases](https://github.com/RobertBColton/DockFX/releases) page. The library itself includes a demo as the main class for testing purposes. This demo is always included for the time being as it is very small and not expected to get much bigger. An HTML readme file is included next to the jar but does not need to be distributed with the library. The library and the demo will also work regardless of whether the readme HTML file exists. You should be able to add the library to your class path and use it like any normal library.
 
 ## Compiling from Source
 The project was originally written in the Eclipse IDE but is also configured for Apache Maven. The project will continue to facilitate development with both command line tools and the Eclipse IDE.
