@@ -2,6 +2,7 @@
 *.class
 *.classpath
 *.project
+*.settings
 dockfx.jar
 dockfxdemo.jar
 *.jar
