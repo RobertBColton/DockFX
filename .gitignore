@@ -6,3 +6,4 @@ dockfxdemo.jar
 *.db
 .git/modules
 /bin
+target
