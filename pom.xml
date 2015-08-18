@@ -6,7 +6,7 @@
     <groupId>org.dockfx</groupId>
     <artifactId>dockfx</artifactId>
     <packaging>jar</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.1-SNAPSHOT</version>
     <name>DockFX</name>
     <url>https://github.com/RobertBColton/DockFX.git</url>
     
@@ -20,6 +20,17 @@
     
     <build>
         <plugins>
+        	<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>org.dockfx.demo.DockFX</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
