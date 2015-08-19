@@ -401,6 +401,7 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
           split.getItems().set(split.getItems().indexOf(sibling), splitPane);
           splitPane.getItems().add(sibling);
         }
+        sibling = null;
         if (split == root) {
           root = splitPane;
         }
