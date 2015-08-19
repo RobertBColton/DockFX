@@ -363,6 +363,7 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
       return;
     }
 
+    // find the parent of the sibling
     if (sibling != null && sibling != root) {
       Stack<Parent> stack = new Stack<Parent>();
       stack.push((Parent) root);
@@ -389,6 +390,7 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
     Orientation requestedOrientation = (dockPos == DockPos.LEFT || dockPos == DockPos.RIGHT)
         ? Orientation.HORIZONTAL : Orientation.VERTICAL;
 
+    // if the orientation is different then reparent the split pane
     if (split.getOrientation() != requestedOrientation) {
       if (split.getItems().size() > 1) {
         SplitPane splitPane = new SplitPane();
@@ -407,6 +409,7 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
       split.setOrientation(requestedOrientation);
     }
 
+    // finally dock the node to the correct split pane
     ObservableList<Node> splitItems = split.getItems();
 
     double magnitude = 0;
@@ -424,22 +427,35 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
     }
 
     if (dockPos == DockPos.LEFT || dockPos == DockPos.TOP) {
-      splitItems.add(0, node);
+      int relativeIndex = 0;
+      if (sibling != null && sibling != root) {
+        relativeIndex = splitItems.indexOf(sibling);
+      }
+
+      splitItems.add(relativeIndex, node);
+
       if (splitItems.size() > 1) {
         if (split.getOrientation() == Orientation.HORIZONTAL) {
-          split.setDividerPosition(0, node.prefWidth(0) / (magnitude + node.prefWidth(0)));
+          split.setDividerPosition(relativeIndex,
+              node.prefWidth(0) / (magnitude + node.prefWidth(0)));
         } else {
-          split.setDividerPosition(0, node.prefHeight(0) / (magnitude + node.prefHeight(0)));
+          split.setDividerPosition(relativeIndex,
+              node.prefHeight(0) / (magnitude + node.prefHeight(0)));
         }
       }
     } else if (dockPos == DockPos.RIGHT || dockPos == DockPos.BOTTOM) {
-      splitItems.add(splitItems.size(), node);
+      int relativeIndex = splitItems.size();
+      if (sibling != null && sibling != root) {
+        relativeIndex = splitItems.indexOf(sibling) + 1;
+      }
+
+      splitItems.add(relativeIndex, node);
       if (splitItems.size() > 1) {
         if (split.getOrientation() == Orientation.HORIZONTAL) {
-          split.setDividerPosition(splitItems.size() - 2,
+          split.setDividerPosition(relativeIndex - 1,
               1 - node.prefWidth(0) / (magnitude + node.prefWidth(0)));
         } else {
-          split.setDividerPosition(splitItems.size() - 2,
+          split.setDividerPosition(relativeIndex - 1,
               1 - node.prefHeight(0) / (magnitude + node.prefHeight(0)));
         }
       }
@@ -469,11 +485,11 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
     node.removeEventFilter(DockEvent.DOCK_OVER, dockNodeEventHandler);
     dockNodeEventFilters.remove(node);
 
-
-    Stack<Parent> stack = new Stack<Parent>();
-    stack.push((Parent) root);
-    while (!stack.isEmpty()) {
-      Parent parent = stack.pop();
+    // depth first search to find the parent of the node
+    Stack<Parent> findStack = new Stack<Parent>();
+    findStack.push((Parent) root);
+    while (!findStack.isEmpty()) {
+      Parent parent = findStack.pop();
 
       ObservableList<Node> children = parent.getChildrenUnmodifiable();
 
@@ -485,9 +501,37 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
       for (int i = 0; i < children.size(); i++) {
         if (children.get(i) == node) {
           children.remove(i);
+
+          // start from the root again and remove any SplitPane's with no children in them
+          Stack<Parent> clearStack = new Stack<Parent>();
+          clearStack.push((Parent) root);
+          while (!clearStack.isEmpty()) {
+            parent = clearStack.pop();
+
+            children = parent.getChildrenUnmodifiable();
+
+            if (parent instanceof SplitPane) {
+              SplitPane split = (SplitPane) parent;
+              children = split.getItems();
+            }
+
+            for (i = 0; i < children.size(); i++) {
+              if (children.get(i) instanceof SplitPane) {
+                SplitPane split = (SplitPane) children.get(i);
+                if (split.getItems().size() < 1) {
+                  children.remove(i);
+                  continue;
+                } else {
+                  clearStack.push(split);
+                }
+              }
+
+            }
+          }
+
           return;
         } else if (children.get(i) instanceof Parent) {
-          stack.push((Parent) children.get(i));
+          findStack.push((Parent) children.get(i));
         }
       }
     }
