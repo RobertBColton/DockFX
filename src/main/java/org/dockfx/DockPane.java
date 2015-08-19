@@ -394,17 +394,15 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
     if (split.getOrientation() != requestedOrientation) {
       if (split.getItems().size() > 1) {
         SplitPane splitPane = new SplitPane();
-        if (split == root) {
-          this.getChildren().set(this.getChildren().indexOf(split), splitPane);
+        if (split == root && sibling == root) {
+          this.getChildren().set(this.getChildren().indexOf(root), splitPane);
           splitPane.getItems().add(split);
-          sibling = split;
+          root = splitPane;
         } else {
           split.getItems().set(split.getItems().indexOf(sibling), splitPane);
           splitPane.getItems().add(sibling);
         }
-        if (split == root) {
-          root = splitPane;
-        }
+
         split = splitPane;
       }
       split.setOrientation(requestedOrientation);
