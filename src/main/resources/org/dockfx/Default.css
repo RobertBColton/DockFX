@@ -28,28 +28,28 @@
  ******************************************************************************/
 
 .dock-area-indicator {
-	-fx-fill: -fx-selection-bar;
-	-fx-opacity: 0.5;
-	-fx-stroke: rgba(50, 50, 100, 0.4);
-	-fx-stroke-width: 6;
-	-fx-stroke-type: inside;
-	-fx-stroke-dash-array: 8 4;
-	-fx-stroke-line-cap: butt;
+  -fx-fill: -fx-selection-bar;
+  -fx-opacity: 0.5;
+  -fx-stroke: rgba(50, 50, 100, 0.4);
+  -fx-stroke-width: 6;
+  -fx-stroke-type: inside;
+  -fx-stroke-dash-array: 8 4;
+  -fx-stroke-line-cap: butt;
 }
 
 .dock-pos-indicator {
-	-fx-padding: 10;
-	-fx-hgap: 30;
-	-fx-vgap: 30;
-	-fx-shape: "M0,10 a10,10 0 1,0 20,0 a10,10 0 1,0 -20,0";
-	-fx-background-color: rgba(50, 50, 100, 0.4);
-	-fx-border-width: 50;
-	-fx-border-color: rgba(50, 50, 100, 0.2);
+  -fx-padding: 10;
+  -fx-hgap: 30;
+  -fx-vgap: 30;
+  -fx-shape: "M0,10 a10,10 0 1,0 20,0 a10,10 0 1,0 -20,0";
+  -fx-background-color: rgba(50, 50, 100, 0.4);
+  -fx-border-width: 50;
+  -fx-border-color: rgba(50, 50, 100, 0.2);
 }
 
 /* JavaFX developers really seem to have fat fingers? */
 .dock-pos-indicator .button {
-	-fx-padding: 4;
+  -fx-padding: 4;
 }
 
 /* This stops the stack pane containing the aligned
@@ -58,49 +58,49 @@
  * It gives them just enough room to breathe from the border.
  */
 .dock-root-pane {
-	-fx-padding: 5;
+  -fx-padding: 5;
 }
 
 /* JavaFX developers really seem to have fat fingers? */
 .dock-root-pane .button {
-	-fx-padding: 4;
+  -fx-padding: 4;
 }
 
 /* Set the icons for the indicator buttons here. */
 .dock-center {
-	-fx-graphic: url(center.png);
+  -fx-graphic: url(center.png);
 }
 
 .dock-top {
-	-fx-graphic: url(top.png);
+  -fx-graphic: url(top.png);
 }
 
 .dock-right {
-	-fx-graphic: url(right.png);
+  -fx-graphic: url(right.png);
 }
 
 .dock-bottom {
-	-fx-graphic: url(bottom.png);
+  -fx-graphic: url(bottom.png);
 }
 
 .dock-left {
-	-fx-graphic: url(left.png);
+  -fx-graphic: url(left.png);
 }
 
 .dock-top-root {
-	-fx-graphic: url(top.png);
+  -fx-graphic: url(top.png);
 }
 
 .dock-right-root {
-	-fx-graphic: url(right.png);
+  -fx-graphic: url(right.png);
 }
 
 .dock-bottom-root {
-	-fx-graphic: url(bottom.png);
+  -fx-graphic: url(bottom.png);
 }
 
 .dock-left-root {
-	-fx-graphic: url(left.png);
+  -fx-graphic: url(left.png);
 }
 
 /*******************************************************************************
@@ -110,13 +110,13 @@
  ******************************************************************************/
 
 .dock-node-border {
-	-fx-padding: 10;
-	-fx-background-color: transparent;
-	-fx-effect: dropshadow( three-pass-box, rgba(0,0,0,0.4), 10,0.2,0,0 );
+  -fx-padding: 10;
+  -fx-background-color: transparent;
+  -fx-effect: dropshadow( three-pass-box, rgba(0,0,0,0.4), 10,0.2,0,0 );
 }
 
 .dock-node-border:maximized {
-	-fx-padding: 0;
+  -fx-padding: 0;
 }
 
 /* It is necessary that dock node's have a background color
@@ -124,22 +124,22 @@
  * tabs will be fully transparent.
  */
 .dock-node {
-	-fx-background-color: -fx-background;
+  -fx-background-color: -fx-background;
 }
 
 .dock-title-bar {
-	-fx-background-color: -fx-background;
-    -fx-padding: 2;
-    -fx-spacing: 3;
-    -fx-border-width: 1;
-    -fx-border-color: -fx-outer-border;
+  -fx-background-color: -fx-background;
+  -fx-padding: 2;
+  -fx-spacing: 3;
+  -fx-border-width: 1;
+  -fx-border-color: -fx-outer-border;
 }
 
 .dock-title-label {
-	-fx-graphic: url(docknode.png);
-	-fx-padding: 0 0 3 0;
-	-fx-text-fill: -fx-text-base-color;
-	-fx-effect: dropshadow( gaussian, rgba(255,255,255,0.2), 0,0,0,1 );
+  -fx-graphic: url(docknode.png);
+  -fx-padding: 0 0 3 0;
+  -fx-text-fill: -fx-text-base-color;
+  -fx-effect: dropshadow( gaussian, rgba(255,255,255,0.2), 0,0,0,1 );
 }
 
 /* We want small buttons for our dock's title bar
@@ -150,22 +150,22 @@
  * excessively wide buttons.
  */
 .dock-title-bar .button {
-	-fx-padding: 1 4 1 4;
+  -fx-padding: 1 4 1 4;
 }
 
 /* Set the icons for the dock title bar's buttons here. */
 .dock-state-button {
-	-fx-graphic: url(restore.png);
+  -fx-graphic: url(restore.png);
 }
 
 .dock-node:floating .dock-state-button {
-	-fx-graphic: url(maximize.png);
+  -fx-graphic: url(maximize.png);
 }
 
 .dock-node:maximized .dock-state-button {
-	-fx-graphic: url(restore.png);
+  -fx-graphic: url(restore.png);
 }
 
 .dock-close-button {
-	-fx-graphic: url(close.png);
+  -fx-graphic: url(close.png);
 }
