@@ -187,7 +187,8 @@ public class DockNode extends VBox implements EventHandler<MouseEvent> {
   }
 
   /**
-   * The stage style that will be used when the node is floating.
+   * The stage style that will be used when the dock node is floating. This must be set prior to
+   * setting the dock node to floating.
    * 
    * @param stageStyle The stage style that will be used when the node is floating.
    */
@@ -206,14 +207,19 @@ public class DockNode extends VBox implements EventHandler<MouseEvent> {
   }
 
   /**
-   * Changes the title bar of this dock node.
+   * Changes the title bar in the layout of this dock node. This can be used to remove the dock
+   * title bar from the dock node by passing null.
    * 
    * @param dockTitleBar null The new title bar of this dock node, can be set null indicating no
    *        title bar is used.
    */
   public void setDockTitleBar(DockTitleBar dockTitleBar) {
     if (dockTitleBar != null) {
-      this.getChildren().set(this.getChildren().indexOf(this.dockTitleBar), dockTitleBar);
+      if (this.dockTitleBar != null) {
+        this.getChildren().set(this.getChildren().indexOf(this.dockTitleBar), dockTitleBar);
+      } else {
+        this.getChildren().add(0, dockTitleBar);
+      }
     } else {
       this.getChildren().remove(this.dockTitleBar);
     }

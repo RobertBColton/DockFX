@@ -291,8 +291,7 @@ public class DockTitleBar extends HBox implements EventHandler<MouseEvent> {
         dockNode.setMaximized(!dockNode.isMaximized());
       } else {
         // drag detected is used in place of mouse pressed so there is some threshold for the
-        // dragging
-        // which is determined by the default drag detection threshold
+        // dragging which is determined by the default drag detection threshold
         dragLast = new Point2D(event.getScreenX(), event.getScreenY());
       }
     } else if (event.getEventType() == MouseEvent.DRAG_DETECTED) {
