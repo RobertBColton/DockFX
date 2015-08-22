@@ -340,6 +340,7 @@ public class DockTitleBar extends HBox implements EventHandler<MouseEvent> {
         double ratioX = event.getX() / this.getDockNode().getWidth();
         double ratioY = event.getY() / this.getDockNode().getHeight();
         
+        // restore/minimize the window after we have obtained its dimensions
         dockNode.setMaximized(false);
 
         this.getDockNode().getBorderPane().applyCss();
