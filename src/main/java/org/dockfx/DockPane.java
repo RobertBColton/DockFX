@@ -539,7 +539,7 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
   @Override
   public void handle(DockEvent event) {
     if (event.getEventType() == DockEvent.DOCK_ENTER) {
-      if (!dockIndicatorPopup.isShowing()) {
+      if (!dockIndicatorOverlay.isShowing()) {
         Point2D topLeft = DockPane.this.localToScreen(0, 0);
         dockIndicatorOverlay.show(DockPane.this, topLeft.getX(), topLeft.getY());
       }
