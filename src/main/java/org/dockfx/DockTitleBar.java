@@ -337,20 +337,21 @@ public class DockTitleBar extends HBox implements EventHandler<MouseEvent> {
         event.consume();
         return;
       } else if (dockNode.isMaximized()) {
+        double ratioX = event.getX() / this.getDockNode().getWidth();
+        double ratioY = event.getY() / this.getDockNode().getHeight();
+        
         dockNode.setMaximized(false);
 
         this.getDockNode().getBorderPane().applyCss();
         Insets insetsDelta = this.getDockNode().getBorderPane().getInsets();
-
-        // TODO: Still buggy, probably not going to work out all of the kinks
-        // without using the TKStage underlying non-public toolkit.
-        double ratioX = event.getX() / dockNode.getWidth();
-        double ratioY = event.getY() / dockNode.getHeight();
-        dockNode.getStage().setX(
-            event.getScreenX() - ratioX * dockNode.getRestoredWidth() - insetsDelta.getLeft());
-        dockNode.getStage().setY(
-            event.getScreenY() - ratioY * dockNode.getRestoredHeight() - insetsDelta.getTop());
-
+        
+        double insetsWidth = (insetsDelta.getLeft() + insetsDelta.getRight());
+        double insetsHeight = (insetsDelta.getTop() + insetsDelta.getBottom());
+        
+        // scale the drag start location by our restored dimensions
+        dragStart = new Point2D(ratioX * (dockNode.getRestoredWidth() - insetsWidth),
+            ratioY * (dockNode.getRestoredHeight() - insetsHeight));
+        
         return;
       }
       Stage stage = dockNode.getStage();
