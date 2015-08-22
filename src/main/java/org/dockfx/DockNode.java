@@ -112,8 +112,6 @@ public class DockNode extends VBox implements EventHandler<MouseEvent> {
       // Visual Studio. Perhaps file a bug against JavaFX, though
       // a similar work around needs applied for JFrame in Swing.
       // http://bugs.java.com/bugdatabase/view_bug.do?bug_id=4737788
-      // Regardless this also allows us to minimize the Window
-      // if we start dragging it while it is maximized.
       // Bug report filed:
       // https://bugs.openjdk.java.net/browse/JDK-8133330
       if (this.get()) {
