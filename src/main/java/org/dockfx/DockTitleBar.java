@@ -329,6 +329,7 @@ public class DockTitleBar extends HBox implements EventHandler<MouseEvent> {
       // TODO: Not a complete fix because if the window is maximized and we start to drag
       // native windows are supposed to minimize first. Because setMaximized is non-blocking
       // a change to X or Y cancels the maximized change. Bug report filed with Oracle.
+      // Changing maximized during DRAG_DETECTED also doesn't seem to work in general.
       // Please see work around in DockNode.setMaximized(...)
       // https://bugs.openjdk.java.net/browse/JDK-8133334
       if (dockNode.isFloating() && event.getClickCount() == 2
