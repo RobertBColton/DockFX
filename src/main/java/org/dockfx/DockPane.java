@@ -602,7 +602,6 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
         double posY = originToScreen.getY() + dockNodeDrag.getLayoutBounds().getHeight() / 2
             - dockPosIndicator.getHeight() / 2;
 
-        
         if (!dockIndicatorPopup.isShowing()) {
           dockIndicatorPopup.show(DockPane.this, posX, posY);
         } else {
