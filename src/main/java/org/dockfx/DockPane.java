@@ -622,7 +622,7 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
         dockNode.dock(this, dockPosDrag, dockAreaDrag);
       }
     }
-    
+
     if ((event.getEventType() == DockEvent.DOCK_EXIT && !this.receivedEnter)
         || event.getEventType() == DockEvent.DOCK_RELEASED) {
       if (dockIndicatorPopup.isShowing()) {

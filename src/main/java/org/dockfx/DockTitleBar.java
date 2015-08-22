@@ -325,18 +325,18 @@ public class DockTitleBar extends HBox implements EventHandler<MouseEvent> {
       } else if (dockNode.isMaximized()) {
         double ratioX = event.getX() / this.getDockNode().getWidth();
         double ratioY = event.getY() / this.getDockNode().getHeight();
-        
+
         // Please note that setMaximized is ruined by width and height changes occurring on the
         // stage and there is currently a bug report filed for this though I did not give them an
-        // accurate test case which I should and wish I would have. This was causing issues in the 
-        // original release requiring maximized behavior to be implemented manually by saving the 
-        // restored bounds. The problem was that the resize functionality in DockNode.java was 
+        // accurate test case which I should and wish I would have. This was causing issues in the
+        // original release requiring maximized behavior to be implemented manually by saving the
+        // restored bounds. The problem was that the resize functionality in DockNode.java was
         // executing at the same time canceling the maximized change.
         // https://bugs.openjdk.java.net/browse/JDK-8133334
-        
+
         // restore/minimize the window after we have obtained its dimensions
         dockNode.setMaximized(false);
-        
+
         // scale the drag start location by our restored dimensions
         dragStart = new Point2D(ratioX * dockNode.getWidth(), ratioY * dockNode.getHeight());
       }
@@ -349,9 +349,10 @@ public class DockTitleBar extends HBox implements EventHandler<MouseEvent> {
         event.consume();
         return;
       }
-      
-      if (!dragging) return;
-      
+
+      if (!dragging)
+        return;
+
       Stage stage = dockNode.getStage();
       Insets insetsDelta = this.getDockNode().getBorderPane().getInsets();
 

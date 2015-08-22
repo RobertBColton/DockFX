@@ -122,7 +122,7 @@ public class DockNode extends VBox implements EventHandler<MouseEvent> {
 
         stage.setX(bounds.getMinX());
         stage.setY(bounds.getMinY());
-        
+
         stage.setWidth(bounds.getWidth());
         stage.setHeight(bounds.getHeight());
       }
