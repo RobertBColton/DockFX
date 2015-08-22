@@ -542,24 +542,12 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
     if (event.getEventType() == DockEvent.DOCK_ENTER) {
       if (!dockIndicatorPopup.isShowing()) {
         Point2D topLeft = DockPane.this.localToScreen(0, 0);
-        Platform.runLater(new Runnable() {
-          @Override
-          public void run() {
-            dockIndicatorOverlay.show(DockPane.this, topLeft.getX(), topLeft.getY());
-            dockIndicatorPopup.show(DockPane.this, 0, 0);
-          }
-        });
-      }
-    } else if ((event.getEventType() == DockEvent.DOCK_EXIT && !this.receivedEnter)
-        || event.getEventType() == DockEvent.DOCK_RELEASED) {
-      if (dockIndicatorPopup.isShowing()) {
-        Platform.runLater(new Runnable() {
-          @Override
-          public void run() {
-            dockIndicatorOverlay.hide();
-            dockIndicatorPopup.hide();
-          }
-        });
+        dockIndicatorOverlay.show(DockPane.this, topLeft.getX(), topLeft.getY());
+        dockIndicatorPopup.show(DockPane.this, 0, 0);
+        // even though we've shown the stage set both of these invisible until
+        // we are actually docking over something below
+        dockPosIndicator.setVisible(false);
+        dockAreaIndicator.setVisible(false);
       }
     } else if (event.getEventType() == DockEvent.DOCK_OVER) {
       this.receivedEnter = false;
@@ -613,7 +601,6 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
       }
 
       if (dockNodeDrag != null) {
-        dockPosIndicator.setVisible(true);
         Point2D originToScreen = dockNodeDrag.localToScreen(0, 0);
 
         double posX = originToScreen.getX() + dockNodeDrag.getLayoutBounds().getWidth() / 2
@@ -622,6 +609,9 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
             - dockPosIndicator.getHeight() / 2;
         dockIndicatorPopup.setX(posX);
         dockIndicatorPopup.setY(posY);
+        
+        // set it visible after moving the window
+        dockPosIndicator.setVisible(true);
       } else {
         dockPosIndicator.setVisible(false);
       }
@@ -633,6 +623,13 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
         dockNode.dock(this, dockPosDrag, dockAreaDrag);
       }
     }
+    
+    if ((event.getEventType() == DockEvent.DOCK_EXIT && !this.receivedEnter)
+        || event.getEventType() == DockEvent.DOCK_RELEASED) {
+      if (dockIndicatorPopup.isShowing()) {
+        dockIndicatorOverlay.hide();
+        dockIndicatorPopup.hide();
+      }
+    }
   }
-
 }

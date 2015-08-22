@@ -165,9 +165,11 @@ public class DockTitleBar extends HBox implements EventHandler<MouseEvent> {
   }
 
   /**
-   * The change in position used for dragging this title bar.
+   * The mouse location of the original click which we can use to determine the offset during drag.
+   * Title bar dragging is asynchronous so it will not be negatively impacted by less frequent or
+   * lagging mouse events as in the case of most current JavaFX implementations on Linux.
    */
-  private Point2D dragLast;
+  private Point2D dragStart;
   /**
    * Whether this title bar is currently being dragged.
    */
@@ -292,7 +294,7 @@ public class DockTitleBar extends HBox implements EventHandler<MouseEvent> {
       } else {
         // drag detected is used in place of mouse pressed so there is some threshold for the
         // dragging which is determined by the default drag detection threshold
-        dragLast = new Point2D(event.getScreenX(), event.getScreenY());
+        dragStart = new Point2D(event.getX(), event.getY());
       }
     } else if (event.getEventType() == MouseEvent.DRAG_DETECTED) {
       if (!dockNode.isFloating()) {
@@ -352,9 +354,13 @@ public class DockTitleBar extends HBox implements EventHandler<MouseEvent> {
         return;
       }
       Stage stage = dockNode.getStage();
+      Insets insetsDelta = this.getDockNode().getBorderPane().getInsets();
 
-      stage.setX(stage.getX() + (event.getScreenX() - dragLast.getX()));
-      stage.setY(stage.getY() + (event.getScreenY() - dragLast.getY()));
+      // dragging this way makes the interface more responsive in the event
+      // the system is lagging as is the case with most current JavaFX
+      // implementations on Linux
+      stage.setX(event.getScreenX() - dragStart.getX() - insetsDelta.getLeft());
+      stage.setY(event.getScreenY() - dragStart.getY() - insetsDelta.getTop());
 
       // TODO: change the pick result by adding a copyForPick()
       DockEvent dockEnterEvent =
@@ -392,8 +398,6 @@ public class DockTitleBar extends HBox implements EventHandler<MouseEvent> {
 
       this.pickEventTarget(new Point2D(event.getScreenX(), event.getScreenY()), eventTask,
           dockExitEvent);
-
-      dragLast = new Point2D(event.getScreenX(), event.getScreenY());
     } else if (event.getEventType() == MouseEvent.MOUSE_RELEASED) {
       dragging = false;
 
