@@ -28,7 +28,6 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.css.PseudoClass;
 import javafx.event.EventHandler;
-import javafx.geometry.BoundingBox;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
@@ -106,6 +105,8 @@ public class DockNode extends VBox implements EventHandler<MouseEvent> {
         borderPane.pseudoClassStateChanged(MAXIMIZED_PSEUDO_CLASS, get());
       }
 
+      stage.setMaximized(get());
+      
       // TODO: This is a work around to fill the screen bounds and not
       // overlap the task bar when the window is undecorated as in
       // Visual Studio. Perhaps file a bug against JavaFX, though
@@ -116,25 +117,16 @@ public class DockNode extends VBox implements EventHandler<MouseEvent> {
       // Bug report filed:
       // https://bugs.openjdk.java.net/browse/JDK-8133330
       if (this.get()) {
-        restoredX = stage.getX();
-        restoredY = stage.getY();
-        restoredWidth = stage.getWidth();
-        restoredHeight = stage.getHeight();
-
         Screen screen = Screen
-            .getScreensForRectangle(restoredX, restoredY, restoredWidth, restoredHeight).get(0);
+            .getScreensForRectangle(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight())
+            .get(0);
         Rectangle2D bounds = screen.getVisualBounds();
 
-        stage.setX(bounds.getMinX());
-        stage.setY(bounds.getMinY());
+         stage.setX(bounds.getMinX());
+         stage.setY(bounds.getMinY());
 
-        stage.setWidth(bounds.getWidth());
-        stage.setHeight(bounds.getHeight());
-      } else {
-        stage.setX(restoredX);
-        stage.setY(restoredY);
-        stage.setWidth(restoredWidth);
-        stage.setHeight(restoredHeight);
+         stage.setWidth(bounds.getWidth());
+         stage.setHeight(bounds.getHeight());
       }
     }
 
@@ -225,114 +217,6 @@ public class DockNode extends VBox implements EventHandler<MouseEvent> {
     }
 
     this.dockTitleBar = dockTitleBar;
-  }
-
-  /**
-   * The restored bounds of the dock node in discrete units.
-   */
-  private double restoredX, restoredY, restoredWidth, restoredHeight;
-
-  /**
-   * The x coordinate of the node when its state is restored.
-   * 
-   * @param restoredX The x coordinate of the node when its state is restored.
-   */
-  public final void setRestoredX(double restoredX) {
-    this.restoredX = restoredX;
-  }
-
-  /**
-   * The y coordinate of the node when its state is restored.
-   * 
-   * @param restoredY The y coordinate of the node when its state is restored.
-   */
-  public final void setRestoredY(double restoredY) {
-    this.restoredY = restoredY;
-  }
-
-  /**
-   * The coordinates of the node when its state is restored.
-   * 
-   * @param restoredX The x coordinate of the node when its state is restored.
-   * @param restoredY The y coordinate of the node when its state is restored.
-   */
-  public final void relocateRestoredBounds(double restoredX, double restoredY) {
-    this.restoredX = restoredX;
-    this.restoredY = restoredY;
-  }
-
-  /**
-   * The width of the node when its state is restored.
-   * 
-   * @param restoredWidth The width of the node when its state is restored.
-   */
-  public final void setRestoredWidth(double restoredWidth) {
-    this.restoredWidth = restoredWidth;
-  }
-
-  /**
-   * The height of the node when its state is restored.
-   * 
-   * @param restoredHeight The height of the node when its state is restored.
-   */
-  public final void setRestoredHeight(double restoredHeight) {
-    this.restoredHeight = restoredHeight;
-  }
-
-  /**
-   * The dimensions of the node when its state is restored.
-   * 
-   * @param restoredWidth The width of the node when its state is restored.
-   * @param restoredHeight The height of the node when its state is restored.
-   */
-  public final void resizeRestoredBounds(double restoredWidth, double restoredHeight) {
-    this.restoredWidth = restoredWidth;
-    this.restoredHeight = restoredHeight;
-  }
-
-  /**
-   * The x coordinate of the node when its state is restored.
-   * 
-   * @return The x coordinate of the node when its state is restored.
-   */
-  public final double getRestoredX() {
-    return restoredX;
-  }
-
-  /**
-   * The y coordinate of the node when its state is restored.
-   * 
-   * @return The y coordinate of the node when its state is restored.
-   */
-  public final double getRestoredY() {
-    return restoredY;
-  }
-
-  /**
-   * The width of the node when its state is restored.
-   * 
-   * @return The width of the node when its state is restored.
-   */
-  public final double getRestoredWidth() {
-    return restoredWidth;
-  }
-
-  /**
-   * The height of the node when its state is restored.
-   * 
-   * @return The height of the node when its state is restored.
-   */
-  public final double getRestoredHeight() {
-    return restoredHeight;
-  }
-
-  /**
-   * The bounding box of the node when its state is restored.
-   * 
-   * @return The bounding box of the node when its state is restored.
-   */
-  public final BoundingBox getRestoredBounds() {
-    return new BoundingBox(restoredX, restoredY, restoredWidth, restoredHeight);
   }
 
   /**
@@ -798,6 +682,15 @@ public class DockNode extends VBox implements EventHandler<MouseEvent> {
    */
   private boolean sizeWest = false, sizeEast = false, sizeNorth = false, sizeSouth = false;
 
+  /**
+   * Gets whether the mouse is currently in this dock node's resize zone.
+   * 
+   * @return Whether the mouse is currently in this dock node's resize zone.
+   */
+  public boolean isMouseResizeZone() {
+    return sizeWest || sizeEast || sizeNorth || sizeSouth;
+  }
+
   @Override
   public void handle(MouseEvent event) {
     Cursor cursor = Cursor.DEFAULT;
@@ -840,7 +733,7 @@ public class DockNode extends VBox implements EventHandler<MouseEvent> {
       }
 
       this.getScene().setCursor(cursor);
-    } else if (event.getEventType() == MouseEvent.MOUSE_DRAGGED) {
+    } else if (event.getEventType() == MouseEvent.MOUSE_DRAGGED && this.isMouseResizeZone()) {
       Point2D sizeCurrent = new Point2D(event.getScreenX(), event.getScreenY());
       Point2D sizeDelta = sizeCurrent.subtract(sizeLast);
 
@@ -873,6 +766,7 @@ public class DockNode extends VBox implements EventHandler<MouseEvent> {
         stage.setWidth(newWidth);
         currentX = sizeCurrent.getX();
       }
+
       if (newHeight >= stage.getMinHeight()) {
         stage.setY(newY);
         stage.setHeight(newHeight);

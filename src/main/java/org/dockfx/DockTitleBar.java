@@ -322,40 +322,36 @@ public class DockTitleBar extends HBox implements EventHandler<MouseEvent> {
           dockPane.addEventFilter(MouseEvent.MOUSE_DRAGGED, this);
           dockPane.addEventFilter(MouseEvent.MOUSE_RELEASED, this);
         }
+      } else if (dockNode.isMaximized()) {
+        double ratioX = event.getX() / this.getDockNode().getWidth();
+        double ratioY = event.getY() / this.getDockNode().getHeight();
+        
+        // Please note that setMaximized is ruined by width and height changes occurring on the
+        // stage and there is currently a bug report filed for this though I did not give them an
+        // accurate test case which I should and wish I would have. This was causing issues in the 
+        // original release requiring maximized behavior to be implemented manually by saving the 
+        // restored bounds. The problem was that the resize functionality in DockNode.java was 
+        // executing at the same time canceling the maximized change.
+        // https://bugs.openjdk.java.net/browse/JDK-8133334
+        
+        // restore/minimize the window after we have obtained its dimensions
+        dockNode.setMaximized(false);
+        
+        // scale the drag start location by our restored dimensions
+        dragStart = new Point2D(ratioX * dockNode.getWidth(), ratioY * dockNode.getHeight());
       }
       dragging = true;
       event.consume();
-    } else if (event.getEventType() == MouseEvent.MOUSE_DRAGGED && dragging) {
-      // TODO: Not a complete fix because if the window is maximized and we start to drag
-      // native windows are supposed to minimize first. Because setMaximized is non-blocking
-      // a change to X or Y cancels the maximized change. Bug report filed with Oracle.
-      // Changing maximized during DRAG_DETECTED also doesn't seem to work in general.
-      // Please see work around in DockNode.setMaximized(...)
-      // https://bugs.openjdk.java.net/browse/JDK-8133334
+    } else if (event.getEventType() == MouseEvent.MOUSE_DRAGGED) {
       if (dockNode.isFloating() && event.getClickCount() == 2
           && event.getButton() == MouseButton.PRIMARY) {
         event.setDragDetect(false);
         event.consume();
         return;
-      } else if (dockNode.isMaximized()) {
-        double ratioX = event.getX() / this.getDockNode().getWidth();
-        double ratioY = event.getY() / this.getDockNode().getHeight();
-        
-        // restore/minimize the window after we have obtained its dimensions
-        dockNode.setMaximized(false);
-
-        this.getDockNode().getBorderPane().applyCss();
-        Insets insetsDelta = this.getDockNode().getBorderPane().getInsets();
-        
-        double insetsWidth = (insetsDelta.getLeft() + insetsDelta.getRight());
-        double insetsHeight = (insetsDelta.getTop() + insetsDelta.getBottom());
-        
-        // scale the drag start location by our restored dimensions
-        dragStart = new Point2D(ratioX * (dockNode.getRestoredWidth() - insetsWidth),
-            ratioY * (dockNode.getRestoredHeight() - insetsHeight));
-        
-        return;
       }
+      
+      if (!dragging) return;
+      
       Stage stage = dockNode.getStage();
       Insets insetsDelta = this.getDockNode().getBorderPane().getInsets();
 
