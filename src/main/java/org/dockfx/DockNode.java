@@ -106,12 +106,10 @@ public class DockNode extends VBox implements EventHandler<MouseEvent> {
       }
 
       stage.setMaximized(get());
-      
-      // TODO: This is a work around to fill the screen bounds and not
-      // overlap the task bar when the window is undecorated as in
-      // Visual Studio. Perhaps file a bug against JavaFX, though
-      // a similar work around needs applied for JFrame in Swing.
-      // http://bugs.java.com/bugdatabase/view_bug.do?bug_id=4737788
+
+      // TODO: This is a work around to fill the screen bounds and not overlap the task bar when 
+      // the window is undecorated as in Visual Studio. A similar work around needs applied for 
+      // JFrame in Swing. http://bugs.java.com/bugdatabase/view_bug.do?bug_id=4737788
       // Bug report filed:
       // https://bugs.openjdk.java.net/browse/JDK-8133330
       if (this.get()) {
@@ -777,7 +775,5 @@ public class DockNode extends VBox implements EventHandler<MouseEvent> {
         event.consume();
       }
     }
-
   }
-
 }
