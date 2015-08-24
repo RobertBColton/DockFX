@@ -216,7 +216,7 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
 
     dockAreaStrokeTimeline = new Timeline();
     dockAreaStrokeTimeline.setCycleCount(Timeline.INDEFINITE);
-    // 12 is the cumulative offset of the stroke dash array in the Default.css style sheet
+    // 12 is the cumulative offset of the stroke dash array in the default.css style sheet
     // RFE filed for CSS styled timelines/animations:
     // https://bugs.openjdk.java.net/browse/JDK-8133837
     KeyValue kv = new KeyValue(dockAreaIndicator.strokeDashOffsetProperty(), 12);
@@ -300,7 +300,7 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
    */
   public final static void initializeDefaultUserAgentStylesheet() {
     StyleManager.getInstance()
-        .addUserAgentStylesheet(DockPane.class.getResource("Default.css").toExternalForm());
+        .addUserAgentStylesheet(DockPane.class.getResource("default.css").toExternalForm());
   }
 
   /**
