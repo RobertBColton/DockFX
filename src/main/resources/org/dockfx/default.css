@@ -1,0 +1,171 @@
+/**
+* @file Default.css
+* @brief Default styling for docking controls.
+*
+* @section License
+*
+* Copyright (C) 2015 Robert B. Colton
+* This file is a part of the DockFX Library.
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program. If not, see <http://www.gnu.org/licenses/>.
+**/
+
+/*******************************************************************************
+ *                                                                             *
+ * DockPane                                                                    *
+ *                                                                             *
+ ******************************************************************************/
+
+.dock-area-indicator {
+  -fx-fill: -fx-selection-bar;
+  -fx-opacity: 0.5;
+  -fx-stroke: rgba(50, 50, 100, 0.4);
+  -fx-stroke-width: 6;
+  -fx-stroke-type: inside;
+  -fx-stroke-dash-array: 8 4;
+  -fx-stroke-line-cap: butt;
+}
+
+.dock-pos-indicator {
+  -fx-padding: 10;
+  -fx-hgap: 30;
+  -fx-vgap: 30;
+  -fx-shape: "M0,10 a10,10 0 1,0 20,0 a10,10 0 1,0 -20,0";
+  -fx-background-color: rgba(50, 50, 100, 0.4);
+  -fx-border-width: 50;
+  -fx-border-color: rgba(50, 50, 100, 0.2);
+}
+
+/* JavaFX developers really seem to have fat fingers? */
+.dock-pos-indicator .button {
+  -fx-padding: 4;
+}
+
+/* This stops the stack pane containing the aligned
+ * root dock position indicators from offsetting
+ * them when one of them is set to the hover style.
+ * It gives them just enough room to breathe from the border.
+ */
+.dock-root-pane {
+  -fx-padding: 5;
+}
+
+/* JavaFX developers really seem to have fat fingers? */
+.dock-root-pane .button {
+  -fx-padding: 4;
+}
+
+/* Set the icons for the indicator buttons here. */
+.dock-center {
+  -fx-graphic: url(center.png);
+}
+
+.dock-top {
+  -fx-graphic: url(top.png);
+}
+
+.dock-right {
+  -fx-graphic: url(right.png);
+}
+
+.dock-bottom {
+  -fx-graphic: url(bottom.png);
+}
+
+.dock-left {
+  -fx-graphic: url(left.png);
+}
+
+.dock-top-root {
+  -fx-graphic: url(top.png);
+}
+
+.dock-right-root {
+  -fx-graphic: url(right.png);
+}
+
+.dock-bottom-root {
+  -fx-graphic: url(bottom.png);
+}
+
+.dock-left-root {
+  -fx-graphic: url(left.png);
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * DockNode                                                                    *
+ *                                                                             *
+ ******************************************************************************/
+
+.dock-node-border {
+  -fx-padding: 10;
+  -fx-background-color: transparent;
+  -fx-effect: dropshadow( three-pass-box, rgba(0,0,0,0.4), 10,0.2,0,0 );
+}
+
+.dock-node-border:maximized {
+  -fx-padding: 0;
+}
+
+/* It is necessary that dock node's have a background color
+ * because some panes used as content such as TabPane with empty
+ * tabs will be fully transparent.
+ */
+.dock-node {
+  -fx-background-color: -fx-background;
+}
+
+.dock-title-bar {
+  -fx-background-color: -fx-background;
+  -fx-padding: 2;
+  -fx-spacing: 3;
+  -fx-border-width: 1;
+  -fx-border-color: -fx-outer-border;
+}
+
+.dock-title-label {
+  -fx-graphic: url(docknode.png);
+  -fx-padding: 0 0 3 0;
+  -fx-text-fill: -fx-text-base-color;
+  -fx-effect: dropshadow( gaussian, rgba(255,255,255,0.2), 0,0,0,1 );
+}
+
+/* We want small buttons for our dock's title bar
+ * but we have to make sure that the top and bottom
+ * are a good ratio of the left and right padding.
+ * If not we get extra padding on the bottom when the
+ * button is hovered, some factor of the default style's
+ * excessively wide buttons.
+ */
+.dock-title-bar .button {
+  -fx-padding: 1 4 1 4;
+}
+
+/* Set the icons for the dock title bar's buttons here. */
+.dock-state-button {
+  -fx-graphic: url(restore.png);
+}
+
+.dock-node:floating .dock-state-button {
+  -fx-graphic: url(maximize.png);
+}
+
+.dock-node:maximized .dock-state-button {
+  -fx-graphic: url(restore.png);
+}
+
+.dock-close-button {
+  -fx-graphic: url(close.png);
+}
