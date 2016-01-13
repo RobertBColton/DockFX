@@ -39,6 +39,8 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.SplitPane;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
@@ -253,7 +255,7 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
     dockLeftRoot.getStyleClass().add("dock-left-root");
 
     // TODO: dockCenter goes first when tabs are added in a future version
-    dockPosButtons = FXCollections.observableArrayList(dockTop, dockRight, dockBottom, dockLeft,
+    dockPosButtons = FXCollections.observableArrayList(dockCenter, dockTop, dockRight, dockBottom, dockLeft,
         dockTopRoot, dockRightRoot, dockBottomRoot, dockLeftRoot);
 
     dockPosIndicator = new GridPane();
@@ -261,7 +263,7 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
     dockPosIndicator.add(dockRight, 2, 1);
     dockPosIndicator.add(dockBottom, 1, 2);
     dockPosIndicator.add(dockLeft, 0, 1);
-    // dockPosIndicator.add(dockCenter, 1, 1);
+    dockPosIndicator.add(dockCenter, 1, 1);
 
     dockRootPane.getChildren().addAll(dockAreaIndicator, dockTopRoot, dockRightRoot, dockBottomRoot,
         dockLeftRoot);
@@ -387,79 +389,115 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
       }
     }
 
-    Orientation requestedOrientation = (dockPos == DockPos.LEFT || dockPos == DockPos.RIGHT)
-        ? Orientation.HORIZONTAL : Orientation.VERTICAL;
+	if(dockPos == DockPos.CENTER)
+	{
+		if(split.getItems().size() > 0)
+		{
+			DockNode siblingNode = (DockNode) sibling;
+			DockNode newNode = (DockNode) node;
 
-    // if the orientation is different then reparent the split pane
-    if (split.getOrientation() != requestedOrientation) {
-      if (split.getItems().size() > 1) {
-        SplitPane splitPane = new SplitPane();
-        if (split == root && sibling == root) {
-          this.getChildren().set(this.getChildren().indexOf(root), splitPane);
-          splitPane.getItems().add(split);
-          root = splitPane;
-        } else {
-          split.getItems().set(split.getItems().indexOf(sibling), splitPane);
-          splitPane.getItems().add(sibling);
-        }
+			TabPane tabPane = new TabPane();
 
-        split = splitPane;
-      }
-      split.setOrientation(requestedOrientation);
-    }
+			split.getItems().set( split.getItems().indexOf( sibling ), tabPane );
+			tabPane.getTabs().add( new Tab( siblingNode.getTitle(), sibling ) );
+			tabPane.getTabs().add( new Tab( newNode.getTitle(), node ) );
+			//((SplitPane) root).getItems().add( tabPane );
+		}
+	}
+	else
+	{
+		Orientation requestedOrientation = (dockPos == DockPos.LEFT || dockPos == DockPos.RIGHT)
+				? Orientation.HORIZONTAL : Orientation.VERTICAL;
 
-    // finally dock the node to the correct split pane
-    ObservableList<Node> splitItems = split.getItems();
+		// if the orientation is different then reparent the split pane
+		if (split.getOrientation() != requestedOrientation)
+		{
+			if (split.getItems().size() > 1)
+			{
+				SplitPane splitPane = new SplitPane();
+				if (split == root && sibling == root)
+				{
+					this.getChildren().set( this.getChildren().indexOf( root ), splitPane );
+					splitPane.getItems().add( split );
+					root = splitPane;
+				} else
+				{
+					split.getItems().set( split.getItems().indexOf( sibling ), splitPane );
+					splitPane.getItems().add( sibling );
+				}
 
-    double magnitude = 0;
+				split = splitPane;
+			}
+			split.setOrientation( requestedOrientation );
+		}
 
-    if (splitItems.size() > 0) {
-      if (split.getOrientation() == Orientation.HORIZONTAL) {
-        for (Node splitItem : splitItems) {
-          magnitude += splitItem.prefWidth(0);
-        }
-      } else {
-        for (Node splitItem : splitItems) {
-          magnitude += splitItem.prefHeight(0);
-        }
-      }
-    }
+		// finally dock the node to the correct split pane
+		ObservableList<Node> splitItems = split.getItems();
 
-    if (dockPos == DockPos.LEFT || dockPos == DockPos.TOP) {
-      int relativeIndex = 0;
-      if (sibling != null && sibling != root) {
-        relativeIndex = splitItems.indexOf(sibling);
-      }
+		double magnitude = 0;
 
-      splitItems.add(relativeIndex, node);
+		if (splitItems.size() > 0)
+		{
+			if (split.getOrientation() == Orientation.HORIZONTAL)
+			{
+				for (Node splitItem : splitItems)
+				{
+					magnitude += splitItem.prefWidth( 0 );
+				}
+			} else
+			{
+				for (Node splitItem : splitItems)
+				{
+					magnitude += splitItem.prefHeight( 0 );
+				}
+			}
+		}
 
-      if (splitItems.size() > 1) {
-        if (split.getOrientation() == Orientation.HORIZONTAL) {
-          split.setDividerPosition(relativeIndex,
-              node.prefWidth(0) / (magnitude + node.prefWidth(0)));
-        } else {
-          split.setDividerPosition(relativeIndex,
-              node.prefHeight(0) / (magnitude + node.prefHeight(0)));
-        }
-      }
-    } else if (dockPos == DockPos.RIGHT || dockPos == DockPos.BOTTOM) {
-      int relativeIndex = splitItems.size();
-      if (sibling != null && sibling != root) {
-        relativeIndex = splitItems.indexOf(sibling) + 1;
-      }
+		if (dockPos == DockPos.LEFT || dockPos == DockPos.TOP)
+		{
+			int relativeIndex = 0;
+			if (sibling != null && sibling != root)
+			{
+				relativeIndex = splitItems.indexOf( sibling );
+			}
 
-      splitItems.add(relativeIndex, node);
-      if (splitItems.size() > 1) {
-        if (split.getOrientation() == Orientation.HORIZONTAL) {
-          split.setDividerPosition(relativeIndex - 1,
-              1 - node.prefWidth(0) / (magnitude + node.prefWidth(0)));
-        } else {
-          split.setDividerPosition(relativeIndex - 1,
-              1 - node.prefHeight(0) / (magnitude + node.prefHeight(0)));
-        }
-      }
-    }
+			splitItems.add( relativeIndex, node );
 
+			if (splitItems.size() > 1)
+			{
+				if (split.getOrientation() == Orientation.HORIZONTAL)
+				{
+					split.setDividerPosition( relativeIndex,
+							node.prefWidth( 0 ) / (magnitude + node.prefWidth( 0 )) );
+				} else
+				{
+					split.setDividerPosition( relativeIndex,
+							node.prefHeight( 0 ) / (magnitude + node.prefHeight( 0 )) );
+				}
+			}
+		} else if (dockPos == DockPos.RIGHT || dockPos == DockPos.BOTTOM)
+		{
+			int relativeIndex = splitItems.size();
+			if (sibling != null && sibling != root)
+			{
+				relativeIndex = splitItems.indexOf( sibling ) + 1;
+			}
+
+			splitItems.add( relativeIndex, node );
+			if (splitItems.size() > 1)
+			{
+				if (split.getOrientation() == Orientation.HORIZONTAL)
+				{
+					split.setDividerPosition( relativeIndex - 1,
+							1 - node.prefWidth( 0 ) / (magnitude + node.prefWidth( 0 )) );
+				} else
+				{
+					split.setDividerPosition( relativeIndex - 1,
+							1 - node.prefHeight( 0 ) / (magnitude + node.prefHeight( 0 )) );
+				}
+			}
+		}
+	}
   }
 
   /**
@@ -490,49 +528,92 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
     while (!findStack.isEmpty()) {
       Parent parent = findStack.pop();
 
-      ObservableList<Node> children = parent.getChildrenUnmodifiable();
-
       if (parent instanceof SplitPane) {
-        SplitPane split = (SplitPane) parent;
-        children = split.getItems();
-      }
+        SplitPane splitPane = (SplitPane) parent;
+		ObservableList<Node> children = splitPane.getItems();
 
-      for (int i = 0; i < children.size(); i++) {
-        if (children.get(i) == node) {
-          children.remove(i);
+		  for (int i = 0; i < children.size(); i++) {
+			  if (children.get(i) == node) {
+				  children.remove(i);
 
-          // start from the root again and remove any SplitPane's with no children in them
-          Stack<Parent> clearStack = new Stack<Parent>();
-          clearStack.push((Parent) root);
-          while (!clearStack.isEmpty()) {
-            parent = clearStack.pop();
+				  // start from the root again and remove any SplitPane's with no children in them
+				  Stack<Parent> clearStack = new Stack<Parent>();
+				  clearStack.push((Parent) root);
+				  while (!clearStack.isEmpty()) {
+					  parent = clearStack.pop();
 
-            children = parent.getChildrenUnmodifiable();
+					  children = parent.getChildrenUnmodifiable();
 
-            if (parent instanceof SplitPane) {
-              SplitPane split = (SplitPane) parent;
-              children = split.getItems();
-            }
+					  if (parent instanceof SplitPane) {
+						  SplitPane split = (SplitPane) parent;
+						  children = split.getItems();
+					  }
 
-            for (i = 0; i < children.size(); i++) {
-              if (children.get(i) instanceof SplitPane) {
-                SplitPane split = (SplitPane) children.get(i);
-                if (split.getItems().size() < 1) {
-                  children.remove(i);
-                  continue;
-                } else {
-                  clearStack.push(split);
-                }
-              }
+					  for (i = 0; i < children.size(); i++) {
+						  if (children.get(i) instanceof SplitPane) {
+							  SplitPane split = (SplitPane) children.get(i);
+							  if (split.getItems().size() < 1) {
+								  children.remove(i);
+								  continue;
+							  } else {
+								  clearStack.push(split);
+							  }
+						  }
 
-            }
-          }
+					  }
+				  }
 
-          return;
-        } else if (children.get(i) instanceof Parent) {
-          findStack.push((Parent) children.get(i));
-        }
-      }
+				  return;
+			  } else if (children.get(i) instanceof Parent) {
+				  findStack.push((Parent) children.get(i));
+			  }
+		  }
+
+	  }
+	  else if (parent instanceof TabPane)
+	  {
+		  TabPane tabPane = (TabPane) parent;
+		  ObservableList<Tab> tabChildren = tabPane.getTabs();
+
+		  for (int i = 0; i < tabChildren.size(); i++) {
+			  if (tabChildren.get(i).getContent() == node) {
+				  tabChildren.remove(i);
+
+				  // start from the root again and remove any SplitPane's with no children in them
+				  Stack<Parent> clearStack = new Stack<Parent>();
+				  clearStack.push((Parent) root);
+				  while (!clearStack.isEmpty()) {
+					  parent = clearStack.pop();
+
+					  ObservableList<Node> children = parent.getChildrenUnmodifiable();
+
+					  if (parent instanceof SplitPane) {
+						  SplitPane split = (SplitPane) parent;
+						  children = split.getItems();
+					  }
+
+					  for (i = 0; i < children.size(); i++) {
+						  if (children.get(i) instanceof SplitPane) {
+							  SplitPane split = (SplitPane) children.get(i);
+							  if (split.getItems().size() < 1) {
+								  children.remove(i);
+								  continue;
+							  } else {
+								  clearStack.push(split);
+							  }
+						  }
+
+					  }
+				  }
+
+				  return;
+			  } else if (tabChildren.get(i).getContent() instanceof Parent) {
+				  findStack.push((Parent) tabChildren.get(i).getContent());
+			  }
+		  }
+
+	  }
+
     }
   }
 
