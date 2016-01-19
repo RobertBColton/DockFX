@@ -617,6 +617,44 @@ public class DockNode extends VBox implements EventHandler<MouseEvent> {
   }
 
   /**
+   * Boolean property maintaining whether this node is currently tabbed.
+   *
+   * @defaultValue false
+   */
+  public final BooleanProperty tabbedProperty() {
+    return tabbedProperty;
+  }
+
+  private BooleanProperty tabbedProperty = new SimpleBooleanProperty(false) {
+    @Override
+    protected void invalidated() {
+
+      if (getChildren() != null)
+      {
+        if(get())
+        {
+          getChildren().remove(dockTitleBar);
+        }
+        else
+        {
+          getChildren().clear();
+          getChildren().addAll(dockTitleBar, contents);
+        }
+      }
+    }
+
+    @Override
+    public String getName() {
+      return "tabbed";
+    }
+  };
+
+  public final boolean isTabbed() {
+    return floatingProperty.get();
+  }
+
+
+  /**
    * Dock this node into a dock pane.
    * 
    * @param dockPane The dock pane to dock this node into.
@@ -655,6 +693,7 @@ public class DockNode extends VBox implements EventHandler<MouseEvent> {
       dockPane.undock(this);
     }
     this.dockedProperty.set(false);
+    this.tabbedProperty.set(false);
   }
 
   /**
