@@ -637,8 +637,7 @@ public class DockNode extends VBox implements EventHandler<MouseEvent> {
         }
         else
         {
-          getChildren().clear();
-          getChildren().addAll(dockTitleBar, contents);
+          getChildren().add(0, dockTitleBar);
         }
       }
     }
