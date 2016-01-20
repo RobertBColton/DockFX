@@ -23,7 +23,7 @@ public class ContentTabPane extends TabPane implements ContentPane {
   ContentPane parent;
 
   public ContentTabPane() {
-    this.getStyleClass().add("dock-tab-pane");
+    this.setStyle("-fx-skin: \"org.dockfx.pane.skin.ContentTabPaneSkin\";");
   }
 
   public Type getType() {
