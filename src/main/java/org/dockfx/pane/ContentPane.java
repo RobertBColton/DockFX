@@ -10,6 +10,7 @@ import javafx.scene.Parent;
 
 /**
  * ContentPane interface has common functions for Content window
+ *
  * @author HongKee Moon
  */
 public interface ContentPane {
@@ -38,9 +39,9 @@ public interface ContentPane {
   /**
    * Add a node.
    *
-   * @param root the root
+   * @param root    the root
    * @param sibling the sibling
-   * @param node the node
+   * @param node    the node
    * @param dockPos the dock pos
    */
   void addNode(Node root, Node sibling, Node node, DockPos dockPos);
@@ -49,14 +50,15 @@ public interface ContentPane {
    * Remove the node.
    *
    * @param stack the stack
-   * @param node the node
+   * @param node  the node
+   * @return true if the node removed successfully, otherwise false
    */
-  void removeNode(Stack<Parent> stack, Node node);
+  boolean removeNode(Stack<Parent> stack, Node node);
 
   /**
    * Gets sibling's parent.
    *
-   * @param stack the stack
+   * @param stack   the stack
    * @param sibling the sibling
    * @return the sibling parent
    */
@@ -73,15 +75,29 @@ public interface ContentPane {
    * Replace the previous element with new one
    *
    * @param sibling the sibling
-   * @param node the node
+   * @param node    the node
    */
   void set(Node sibling, Node node);
 
   /**
    * Replace the previous element with new one by index id
    *
-   * @param idx the idx
+   * @param idx  the idx
    * @param node the node
    */
   void set(int idx, Node node);
+
+  /**
+   * Gets content parent.
+   *
+   * @return the content parent
+   */
+  ContentPane getContentParent();
+
+  /**
+   * Sets content parent.
+   *
+   * @param pane the pane
+   */
+  void setContentParent(ContentPane pane);
 }
