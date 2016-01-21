@@ -1,3 +1,4 @@
+
 package org.dockfx.pane.skin;
 
 import com.sun.javafx.scene.control.skin.BehaviorSkinBase;
@@ -73,7 +74,9 @@ import org.dockfx.pane.DockNodeTab;
 import static com.sun.javafx.scene.control.skin.resources.ControlResources.getString;
 
 /**
- * Created by moon on 1/20/16.
+ * This class source is copied from com.sun.javafx.scene.control.skin.TabPaneSkin in jfxrt.jar 1.8 version
+ * In the different java version, this source might not be working properly.
+ * The inner class TabMenuItem is modified to handle DockNodeTab title because the tab uses customized graphics
  */
 public class ContentTabPaneSkin extends BehaviorSkinBase<TabPane, TabPaneBehavior> {
 private static enum TabAnimation {
