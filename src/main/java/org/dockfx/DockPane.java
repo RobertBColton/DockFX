@@ -593,10 +593,10 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
 
     if ((event.getEventType() == DockEvent.DOCK_EXIT && !this.receivedEnter)
         || event.getEventType() == DockEvent.DOCK_RELEASED) {
-      if (dockIndicatorPopup.isShowing()) {
-        dockIndicatorOverlay.hide();
-        dockIndicatorPopup.hide();
-      }
+	  if (dockIndicatorOverlay.isShowing())
+		  dockIndicatorOverlay.hide();
+      if (dockIndicatorPopup.isShowing())
+          dockIndicatorPopup.hide();
     }
   }
 }
