@@ -107,15 +107,15 @@ public class DockNode extends VBox implements EventHandler<MouseEvent> {
 
       stage.setMaximized(get());
 
-      // TODO: This is a work around to fill the screen bounds and not overlap the task bar when 
-      // the window is undecorated as in Visual Studio. A similar work around needs applied for 
+      // TODO: This is a work around to fill the screen bounds and not overlap the task bar when
+      // the window is undecorated as in Visual Studio. A similar work around needs applied for
       // JFrame in Swing. http://bugs.java.com/bugdatabase/view_bug.do?bug_id=4737788
       // Bug report filed:
       // https://bugs.openjdk.java.net/browse/JDK-8133330
       if (this.get()) {
-        Screen screen = Screen
-            .getScreensForRectangle(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight())
-            .get(0);
+        Screen screen =
+            Screen.getScreensForRectangle(stage.getX(), stage.getY(), stage.getWidth(),
+                stage.getHeight()).get(0);
         Rectangle2D bounds = screen.getVisualBounds();
 
         stage.setX(bounds.getMinX());
@@ -617,6 +617,39 @@ public class DockNode extends VBox implements EventHandler<MouseEvent> {
   }
 
   /**
+   * Boolean property maintaining whether this node is currently tabbed.
+   *
+   * @defaultValue false
+   */
+  public final BooleanProperty tabbedProperty() {
+    return tabbedProperty;
+  }
+
+  private BooleanProperty tabbedProperty = new SimpleBooleanProperty(false) {
+    @Override
+    protected void invalidated() {
+
+      if (getChildren() != null) {
+        if (get()) {
+          getChildren().remove(dockTitleBar);
+        } else {
+          getChildren().add(0, dockTitleBar);
+        }
+      }
+    }
+
+    @Override
+    public String getName() {
+      return "tabbed";
+    }
+  };
+
+  public final boolean isTabbed() {
+    return floatingProperty.get();
+  }
+
+
+  /**
    * Dock this node into a dock pane.
    * 
    * @param dockPane The dock pane to dock this node into.
@@ -655,6 +688,7 @@ public class DockNode extends VBox implements EventHandler<MouseEvent> {
       dockPane.undock(this);
     }
     this.dockedProperty.set(false);
+    this.tabbedProperty.set(false);
   }
 
   /**
@@ -733,8 +767,8 @@ public class DockNode extends VBox implements EventHandler<MouseEvent> {
       Point2D sizeCurrent = new Point2D(event.getScreenX(), event.getScreenY());
       Point2D sizeDelta = sizeCurrent.subtract(sizeLast);
 
-      double newX = stage.getX(), newY = stage.getY(), newWidth = stage.getWidth(),
-          newHeight = stage.getHeight();
+      double newX = stage.getX(), newY = stage.getY(), newWidth = stage.getWidth(), newHeight =
+          stage.getHeight();
 
       if (sizeNorth) {
         newHeight -= sizeDelta.getY();

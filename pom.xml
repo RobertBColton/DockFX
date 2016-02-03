@@ -4,9 +4,9 @@
     http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.dockfx</groupId>
-    <artifactId>dockfx</artifactId>
+    <artifactId>DockFX</artifactId>
     <packaging>jar</packaging>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.1.1</version>
     <name>DockFX</name>
     <url>https://github.com/RobertBColton/DockFX.git</url>
 
