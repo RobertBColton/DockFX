@@ -55,32 +55,32 @@ public class DockEvent extends Event {
    * node's bounds. Unlike a {@code DragEvent} the dock over event is handed to all stages that may
    * be interested in receiving the dock pane.
    */
-  public static final EventType<DockEvent> DOCK_ENTER =
-      new EventType<DockEvent>(DockEvent.ANY, "DOCK_ENTER");
+  public static final EventType<DockEvent> DOCK_ENTER = new EventType<DockEvent>(DockEvent.ANY,
+      "DOCK_ENTER");
 
   /**
    * This event occurs when a dock window is being dragged by its title bar and the mouse is
    * contained in a node's bounds. Unlike a {@code DragEvent} the dock over event is handed to all
    * stages that may be interested in receiving the dock pane.
    */
-  public static final EventType<DockEvent> DOCK_OVER =
-      new EventType<DockEvent>(DockEvent.ANY, "DOCK_OVER");
+  public static final EventType<DockEvent> DOCK_OVER = new EventType<DockEvent>(DockEvent.ANY,
+      "DOCK_OVER");
 
   /**
    * This event occurs when a dock window is being dragged by its title bar and the mouse exits a
    * node's bounds. Unlike a {@code DragEvent} the dock over event is handed to all stages that may
    * be interested in receiving the dock pane.
    */
-  public static final EventType<DockEvent> DOCK_EXIT =
-      new EventType<DockEvent>(DockEvent.ANY, "DOCK_EXIT");
+  public static final EventType<DockEvent> DOCK_EXIT = new EventType<DockEvent>(DockEvent.ANY,
+      "DOCK_EXIT");
 
   /**
    * This event occurs when a dock window is being dragged by its title bar and the mouse is
    * released over a node's bounds. Unlike a {@code DragEvent} the dock over event is handed to all
    * stages that may be interested in receiving the dock pane.
    */
-  public static final EventType<DockEvent> DOCK_RELEASED =
-      new EventType<DockEvent>(DockEvent.ANY, "DOCK_RELEASED");
+  public static final EventType<DockEvent> DOCK_RELEASED = new EventType<DockEvent>(DockEvent.ANY,
+      "DOCK_RELEASED");
 
   /**
    * Horizontal x position of the event relative to the origin of the DockEvent's node.

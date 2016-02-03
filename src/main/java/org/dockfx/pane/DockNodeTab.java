@@ -34,13 +34,11 @@ public class DockNodeTab extends Tab {
     dockNode.tabbedProperty().set(true);
   }
 
-  public String getTitle()
-  {
+  public String getTitle() {
     return title.getValue();
   }
 
-  public SimpleStringProperty titleProperty()
-  {
+  public SimpleStringProperty titleProperty() {
     return title;
   }
 }

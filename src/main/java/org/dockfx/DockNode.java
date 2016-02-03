@@ -107,15 +107,15 @@ public class DockNode extends VBox implements EventHandler<MouseEvent> {
 
       stage.setMaximized(get());
 
-      // TODO: This is a work around to fill the screen bounds and not overlap the task bar when 
-      // the window is undecorated as in Visual Studio. A similar work around needs applied for 
+      // TODO: This is a work around to fill the screen bounds and not overlap the task bar when
+      // the window is undecorated as in Visual Studio. A similar work around needs applied for
       // JFrame in Swing. http://bugs.java.com/bugdatabase/view_bug.do?bug_id=4737788
       // Bug report filed:
       // https://bugs.openjdk.java.net/browse/JDK-8133330
       if (this.get()) {
-        Screen screen = Screen
-            .getScreensForRectangle(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight())
-            .get(0);
+        Screen screen =
+            Screen.getScreensForRectangle(stage.getX(), stage.getY(), stage.getWidth(),
+                stage.getHeight()).get(0);
         Rectangle2D bounds = screen.getVisualBounds();
 
         stage.setX(bounds.getMinX());
@@ -629,14 +629,10 @@ public class DockNode extends VBox implements EventHandler<MouseEvent> {
     @Override
     protected void invalidated() {
 
-      if (getChildren() != null)
-      {
-        if(get())
-        {
+      if (getChildren() != null) {
+        if (get()) {
           getChildren().remove(dockTitleBar);
-        }
-        else
-        {
+        } else {
           getChildren().add(0, dockTitleBar);
         }
       }
@@ -771,8 +767,8 @@ public class DockNode extends VBox implements EventHandler<MouseEvent> {
       Point2D sizeCurrent = new Point2D(event.getScreenX(), event.getScreenY());
       Point2D sizeDelta = sizeCurrent.subtract(sizeLast);
 
-      double newX = stage.getX(), newY = stage.getY(), newWidth = stage.getWidth(),
-          newHeight = stage.getHeight();
+      double newX = stage.getX(), newY = stage.getY(), newWidth = stage.getWidth(), newHeight =
+          stage.getHeight();
 
       if (sizeNorth) {
         newHeight -= sizeDelta.getY();

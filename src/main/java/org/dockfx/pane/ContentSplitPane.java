@@ -39,8 +39,7 @@ public class ContentSplitPane extends SplitPane implements ContentPane {
   /**
    * Instantiates a new ContentSplitPane
    */
-  public ContentSplitPane() {
-  }
+  public ContentSplitPane() {}
 
   /**
    * Instantiates a new ContentSplitPane.
@@ -84,10 +83,9 @@ public class ContentSplitPane extends SplitPane implements ContentPane {
       if (children.get(i) == node) {
         getItems().remove(i);
         return true;
-      }
-      else if (children.get(i) instanceof ContentPane) {
+      } else if (children.get(i) instanceof ContentPane) {
         pane = (ContentPane) children.get(i);
-        if(pane.removeNode(stack, node) && pane.getChildrenList().size() < 1) {
+        if (pane.removeNode(stack, node) && pane.getChildrenList().size() < 1) {
           getItems().remove(i);
           return true;
         }
@@ -137,11 +135,9 @@ public class ContentSplitPane extends SplitPane implements ContentPane {
 
       if (splitItems.size() > 1) {
         if (getOrientation() == Orientation.HORIZONTAL) {
-          setDividerPosition(relativeIndex,
-                             node.prefWidth(0) / (magnitude + node.prefWidth(0)));
+          setDividerPosition(relativeIndex, node.prefWidth(0) / (magnitude + node.prefWidth(0)));
         } else {
-          setDividerPosition(relativeIndex,
-                             node.prefHeight(0) / (magnitude + node.prefHeight(0)));
+          setDividerPosition(relativeIndex, node.prefHeight(0) / (magnitude + node.prefHeight(0)));
         }
       }
     } else if (dockPos == DockPos.RIGHT || dockPos == DockPos.BOTTOM) {
@@ -154,10 +150,10 @@ public class ContentSplitPane extends SplitPane implements ContentPane {
       if (splitItems.size() > 1) {
         if (getOrientation() == Orientation.HORIZONTAL) {
           setDividerPosition(relativeIndex - 1,
-                             1 - node.prefWidth(0) / (magnitude + node.prefWidth(0)));
+              1 - node.prefWidth(0) / (magnitude + node.prefWidth(0)));
         } else {
           setDividerPosition(relativeIndex - 1,
-                             1 - node.prefHeight(0) / (magnitude + node.prefHeight(0)));
+              1 - node.prefHeight(0) / (magnitude + node.prefHeight(0)));
         }
       }
     }
