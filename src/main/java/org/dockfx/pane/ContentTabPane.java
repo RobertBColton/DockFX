@@ -77,6 +77,7 @@ public class ContentTabPane extends TabPane implements ContentPane {
   public void set(int idx, Node node) {
     DockNode newNode = (DockNode) node;
     getTabs().set(idx, new DockNodeTab(newNode));
+	getSelectionModel().select( idx );
   }
 
   public void set(Node sibling, Node node) {
@@ -89,6 +90,8 @@ public class ContentTabPane extends TabPane implements ContentPane {
 
   public void addNode(Node root, Node sibling, Node node, DockPos dockPos) {
     DockNode newNode = (DockNode) node;
-    getTabs().add(new DockNodeTab(newNode));
+	DockNodeTab t = new DockNodeTab(newNode);
+    getTabs().add(t);
+	getSelectionModel().select( t );
   }
 }
