@@ -390,6 +390,10 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
         tabPane.addDockNodeTab( new DockNodeTab( newNode ) );
 
         tabPane.setContentParent(pane);
+
+        double[] pos = ((ContentSplitPane) pane).getDividerPositions();
+		pane.set( sibling, tabPane );
+		( ( ContentSplitPane ) pane ).setDividerPositions( pos );
       }
     } else {
       // Otherwise, SplitPane is assumed.
