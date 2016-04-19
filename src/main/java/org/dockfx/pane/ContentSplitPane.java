@@ -94,7 +94,9 @@ public class ContentSplitPane extends SplitPane implements ContentPane {
 				  getItems().remove(i);
 				  return true;
 		  	  }
-			  else if(pane.getChildrenList().size() == 1)
+			  else if(pane.getChildrenList().size() == 1 &&
+					  pane instanceof ContentTabPane &&
+					  pane.getChildrenList().get(0) instanceof DockNode)
 			  {
 				  List<Node> childrenList = pane.getChildrenList();
 				  Node sibling = childrenList.get(0);
