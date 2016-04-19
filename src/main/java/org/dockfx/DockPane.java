@@ -386,11 +386,10 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
 
         ContentTabPane tabPane = new ContentTabPane();
 
-        tabPane.getTabs().add(new DockNodeTab(siblingNode));
-        tabPane.getTabs().add(new DockNodeTab(newNode));
+        tabPane.addDockNodeTab( new DockNodeTab( siblingNode ) );
+        tabPane.addDockNodeTab( new DockNodeTab( newNode ) );
 
         tabPane.setContentParent(pane);
-        pane.set(sibling, tabPane);
       }
     } else {
       // Otherwise, SplitPane is assumed.

@@ -1,5 +1,7 @@
 package org.dockfx.pane;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import org.dockfx.DockNode;
 import org.dockfx.DockPos;
 
@@ -77,7 +79,7 @@ public class ContentTabPane extends TabPane implements ContentPane {
   public void set(int idx, Node node) {
     DockNode newNode = (DockNode) node;
     getTabs().set(idx, new DockNodeTab(newNode));
-	getSelectionModel().select(idx);
+	getSelectionModel().select( idx );
   }
 
   public void set(Node sibling, Node node) {
@@ -91,7 +93,25 @@ public class ContentTabPane extends TabPane implements ContentPane {
   public void addNode(Node root, Node sibling, Node node, DockPos dockPos) {
     DockNode newNode = (DockNode) node;
 	DockNodeTab t = new DockNodeTab(newNode);
-    getTabs().add(t);
-	getSelectionModel().select(t);
+	addDockNodeTab( t );
+  }
+
+  public void addDockNodeTab(DockNodeTab dockNodeTab)
+  {
+	  dockNodeTab.getGraphic().visibleProperty().addListener( new ChangeListener< Boolean >()
+	  {
+		  @Override public void changed( ObservableValue< ? extends Boolean > observable, Boolean oldValue, Boolean newValue )
+		  {
+			  if(newValue)
+				  getSelectionModel().select( dockNodeTab );
+		  }
+	  } );
+	  getTabs().add(dockNodeTab);
+	  getSelectionModel().select( dockNodeTab );
+  }
+
+  public void select(DockNodeTab nodeTab)
+  {
+	getSelectionModel().select(nodeTab);
   }
 }
