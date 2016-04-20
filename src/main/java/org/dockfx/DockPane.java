@@ -500,6 +500,7 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
           ContentPane contentParent = pane.getContentParent();
 
           contentParent.set((Node) pane, sibling);
+		  ((DockNode)sibling).tabbedProperty().setValue(false);
         }
       }
     }

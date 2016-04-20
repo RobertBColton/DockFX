@@ -103,6 +103,7 @@ public class ContentSplitPane extends SplitPane implements ContentPane {
 				  ContentPane contentParent = pane.getContentParent();
 
 				  contentParent.set((Node) pane, sibling);
+				  ((DockNode)sibling).tabbedProperty().setValue(false);
 				  return true;
 			  }
 		  }
