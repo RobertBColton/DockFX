@@ -33,6 +33,7 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -42,6 +43,7 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
+import org.dockfx.pane.DockNodeTab;
 
 /**
  * Base class for a dock node that provides the layout of the content along with a title bar and a
@@ -743,6 +745,18 @@ public class DockNode extends VBox implements EventHandler<MouseEvent> {
       undock();
     }
 	this.closedProperty.set(true);
+  }
+
+  private DockNodeTab dockNodeTab;
+  public void setNodeTab( DockNodeTab nodeTab )
+  {
+    this.dockNodeTab = nodeTab;
+  }
+
+  public void focus()
+  {
+	  if( tabbedProperty().get() )
+		  dockNodeTab.select();
   }
 
   /**
