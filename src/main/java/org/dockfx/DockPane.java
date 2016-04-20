@@ -378,6 +378,12 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
       pane = pane.getSiblingParent(stack, sibling);
     }
 
+	if (pane == null) {
+		sibling = root;
+		dockPos = DockPos.LEFT;
+		pane = (ContentPane) root;
+	}
+
     if (dockPos == DockPos.CENTER) {
       if (pane instanceof ContentSplitPane) {
         // Create a ContentTabPane with two nodes

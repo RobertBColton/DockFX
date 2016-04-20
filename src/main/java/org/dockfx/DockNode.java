@@ -652,8 +652,41 @@ public class DockNode extends VBox implements EventHandler<MouseEvent> {
 		return tabbedProperty.get();
 	}
 
+	/**
+	 * Boolean property maintaining whether this node is currently closed.
+	 */
+	public final BooleanProperty closedProperty() {
+		return closedProperty;
+	}
 
-  /**
+	private BooleanProperty closedProperty = new SimpleBooleanProperty(false) {
+		@Override
+		protected void invalidated() {
+		}
+
+		@Override
+		public String getName() {
+			return "closed";
+		}
+	};
+
+	public final boolean isClosed() {
+		return closedProperty.get();
+	}
+
+	private DockPos lastDockPos;
+	public DockPos getLastDockPos()
+	{
+		return lastDockPos;
+	}
+
+	private Node lastDockSibling;
+	public Node getLastDockSibling()
+	{
+		return lastDockSibling;
+	}
+
+	/**
    * Dock this node into a dock pane.
    * 
    * @param dockPane The dock pane to dock this node into.
@@ -663,6 +696,8 @@ public class DockNode extends VBox implements EventHandler<MouseEvent> {
   public void dock(DockPane dockPane, DockPos dockPos, Node sibling) {
     dockImpl(dockPane);
     dockPane.dock(this, dockPos, sibling);
+	this.lastDockPos = dockPos;
+	this.lastDockSibling = sibling;
   }
 
   /**
@@ -674,6 +709,7 @@ public class DockNode extends VBox implements EventHandler<MouseEvent> {
   public void dock(DockPane dockPane, DockPos dockPos) {
     dockImpl(dockPane);
     dockPane.dock(this, dockPos);
+	this.lastDockPos = dockPos;
   }
 
   private final void dockImpl(DockPane dockPane) {
@@ -682,6 +718,7 @@ public class DockNode extends VBox implements EventHandler<MouseEvent> {
     }
     this.dockPane = dockPane;
     this.dockedProperty.set(true);
+	this.closedProperty.set(false);
   }
 
   /**
@@ -705,6 +742,7 @@ public class DockNode extends VBox implements EventHandler<MouseEvent> {
     } else if (isDocked()) {
       undock();
     }
+	this.closedProperty.set(true);
   }
 
   /**
