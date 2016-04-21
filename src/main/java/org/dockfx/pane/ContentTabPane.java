@@ -98,20 +98,7 @@ public class ContentTabPane extends TabPane implements ContentPane {
 
   public void addDockNodeTab(DockNodeTab dockNodeTab)
   {
-	  dockNodeTab.getGraphic().visibleProperty().addListener( new ChangeListener< Boolean >()
-	  {
-		  @Override public void changed( ObservableValue< ? extends Boolean > observable, Boolean oldValue, Boolean newValue )
-		  {
-			  if(newValue)
-				  getSelectionModel().select( dockNodeTab );
-		  }
-	  } );
 	  getTabs().add(dockNodeTab);
 	  getSelectionModel().select( dockNodeTab );
-  }
-
-  public void select(DockNodeTab nodeTab)
-  {
-	getSelectionModel().select(nodeTab);
   }
 }
