@@ -33,6 +33,7 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -42,6 +43,7 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
+import org.dockfx.pane.DockNodeTab;
 
 /**
  * Base class for a dock node that provides the layout of the content along with a title bar and a
@@ -649,11 +651,44 @@ public class DockNode extends VBox implements EventHandler<MouseEvent> {
   };
 
   public final boolean isTabbed() {
-    return floatingProperty.get();
-  }
+		return tabbedProperty.get();
+	}
 
+	/**
+	 * Boolean property maintaining whether this node is currently closed.
+	 */
+	public final BooleanProperty closedProperty() {
+		return closedProperty;
+	}
 
-  /**
+	private BooleanProperty closedProperty = new SimpleBooleanProperty(false) {
+		@Override
+		protected void invalidated() {
+		}
+
+		@Override
+		public String getName() {
+			return "closed";
+		}
+	};
+
+	public final boolean isClosed() {
+		return closedProperty.get();
+	}
+
+	private DockPos lastDockPos;
+	public DockPos getLastDockPos()
+	{
+		return lastDockPos;
+	}
+
+	private Node lastDockSibling;
+	public Node getLastDockSibling()
+	{
+		return lastDockSibling;
+	}
+
+	/**
    * Dock this node into a dock pane.
    * 
    * @param dockPane The dock pane to dock this node into.
@@ -663,6 +698,8 @@ public class DockNode extends VBox implements EventHandler<MouseEvent> {
   public void dock(DockPane dockPane, DockPos dockPos, Node sibling) {
     dockImpl(dockPane);
     dockPane.dock(this, dockPos, sibling);
+	this.lastDockPos = dockPos;
+	this.lastDockSibling = sibling;
   }
 
   /**
@@ -674,6 +711,7 @@ public class DockNode extends VBox implements EventHandler<MouseEvent> {
   public void dock(DockPane dockPane, DockPos dockPos) {
     dockImpl(dockPane);
     dockPane.dock(this, dockPos);
+	this.lastDockPos = dockPos;
   }
 
   private final void dockImpl(DockPane dockPane) {
@@ -682,6 +720,7 @@ public class DockNode extends VBox implements EventHandler<MouseEvent> {
     }
     this.dockPane = dockPane;
     this.dockedProperty.set(true);
+	this.closedProperty.set(false);
   }
 
   /**
@@ -705,6 +744,19 @@ public class DockNode extends VBox implements EventHandler<MouseEvent> {
     } else if (isDocked()) {
       undock();
     }
+	this.closedProperty.set(true);
+  }
+
+  private DockNodeTab dockNodeTab;
+  public void setNodeTab( DockNodeTab nodeTab )
+  {
+    this.dockNodeTab = nodeTab;
+  }
+
+  public void focus()
+  {
+	  if( tabbedProperty().get() )
+		  dockNodeTab.select();
   }
 
   /**

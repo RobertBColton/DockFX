@@ -359,7 +359,7 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
    * @param dockPos The docking position of the node relative to the sibling.
    * @param sibling The sibling of this node in the layout.
    */
-  public void dock(Node node, DockPos dockPos, Node sibling) {
+  void dock(Node node, DockPos dockPos, Node sibling) {
     DockNodeEventHandler dockNodeEventHandler = new DockNodeEventHandler(node);
     dockNodeEventFilters.put(node, dockNodeEventHandler);
     node.addEventFilter(DockEvent.DOCK_OVER, dockNodeEventHandler);
@@ -378,6 +378,12 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
       pane = pane.getSiblingParent(stack, sibling);
     }
 
+	if (pane == null) {
+		sibling = root;
+		dockPos = DockPos.LEFT;
+		pane = (ContentPane) root;
+	}
+
     if (dockPos == DockPos.CENTER) {
       if (pane instanceof ContentSplitPane) {
         // Create a ContentTabPane with two nodes
@@ -386,11 +392,14 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
 
         ContentTabPane tabPane = new ContentTabPane();
 
-        tabPane.getTabs().add(new DockNodeTab(siblingNode));
-        tabPane.getTabs().add(new DockNodeTab(newNode));
+        tabPane.addDockNodeTab( new DockNodeTab( siblingNode ) );
+        tabPane.addDockNodeTab( new DockNodeTab( newNode ) );
 
         tabPane.setContentParent(pane);
-        pane.set(sibling, tabPane);
+
+        double[] pos = ((ContentSplitPane) pane).getDividerPositions();
+		pane.set( sibling, tabPane );
+		( ( ContentSplitPane ) pane ).setDividerPositions( pos );
       }
     } else {
       // Otherwise, SplitPane is assumed.
@@ -462,7 +471,7 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
    * @param node    The node that is to be docked into this dock pane.
    * @param dockPos The docking position of the node relative to the sibling.
    */
-  public void dock(Node node, DockPos dockPos) {
+  void dock(Node node, DockPos dockPos) {
     dock(node, dockPos, root);
   }
 
@@ -471,7 +480,7 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
    *
    * @param node The node that is to be removed from this dock pane.
    */
-  public void undock(DockNode node) {
+  void undock(DockNode node) {
     DockNodeEventHandler dockNodeEventHandler = dockNodeEventFilters.get(node);
     node.removeEventFilter(DockEvent.DOCK_OVER, dockNodeEventHandler);
     dockNodeEventFilters.remove(node);
@@ -497,7 +506,7 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
           ContentPane contentParent = pane.getContentParent();
 
           contentParent.set((Node) pane, sibling);
-          ((DockNode)sibling).tabbedProperty().setValue(false);
+		  ((DockNode)sibling).tabbedProperty().setValue(false);
         }
       }
     }

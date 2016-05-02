@@ -1,5 +1,7 @@
 package org.dockfx.pane;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import org.dockfx.DockNode;
 import org.dockfx.DockPos;
 
@@ -77,6 +79,7 @@ public class ContentTabPane extends TabPane implements ContentPane {
   public void set(int idx, Node node) {
     DockNode newNode = (DockNode) node;
     getTabs().set(idx, new DockNodeTab(newNode));
+	getSelectionModel().select( idx );
   }
 
   public void set(Node sibling, Node node) {
@@ -89,6 +92,13 @@ public class ContentTabPane extends TabPane implements ContentPane {
 
   public void addNode(Node root, Node sibling, Node node, DockPos dockPos) {
     DockNode newNode = (DockNode) node;
-    getTabs().add(new DockNodeTab(newNode));
+	DockNodeTab t = new DockNodeTab(newNode);
+	addDockNodeTab( t );
+  }
+
+  public void addDockNodeTab(DockNodeTab dockNodeTab)
+  {
+	  getTabs().add(dockNodeTab);
+	  getSelectionModel().select( dockNodeTab );
   }
 }

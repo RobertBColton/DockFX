@@ -1,5 +1,6 @@
 package org.dockfx.pane;
 
+import org.dockfx.DockNode;
 import org.dockfx.DockPos;
 
 import java.util.List;
@@ -87,10 +88,25 @@ public class ContentSplitPane extends SplitPane implements ContentPane {
       }
       else if (children.get(i) instanceof ContentPane) {
         pane = (ContentPane) children.get(i);
-        if(pane.removeNode(stack, node) && pane.getChildrenList().size() < 1) {
-          getItems().remove(i);
-          return true;
-        }
+		  if(pane.removeNode(stack, node))
+		  {
+			  if( pane.getChildrenList().size() < 1) {
+				  getItems().remove(i);
+				  return true;
+		  	  }
+			  else if(pane.getChildrenList().size() == 1 &&
+					  pane instanceof ContentTabPane &&
+					  pane.getChildrenList().get(0) instanceof DockNode)
+			  {
+				  List<Node> childrenList = pane.getChildrenList();
+				  Node sibling = childrenList.get(0);
+				  ContentPane contentParent = pane.getContentParent();
+
+				  contentParent.set((Node) pane, sibling);
+				  ((DockNode)sibling).tabbedProperty().setValue(false);
+				  return true;
+			  }
+		  }
       }
     }
 
