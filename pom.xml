@@ -6,7 +6,7 @@
     <groupId>org.dockfx</groupId>
     <artifactId>DockFX</artifactId>
     <packaging>jar</packaging>
-    <version>0.1.3</version>
+    <version>0.1.5</version>
     <name>DockFX</name>
     <url>https://github.com/hkmoon/DockFX.git</url>
 
@@ -75,9 +75,9 @@
 
     <distributionManagement>
         <repository>
-            <id>bintray-rtlib-Halcyon</id>
-            <name>rtlib-Halcyon</name>
-            <url>https://api.bintray.com/maven/rtlib/Halcyon/DockFX/;publish=1</url>
+            <id>bintray-clearcontrol-Halcyon</id>
+            <name>clearcontrol-Halcyon</name>
+            <url>https://api.bintray.com/maven/clearcontrol/ClearControl/DockFX/;publish=1</url>
         </repository>
     </distributionManagement>
 
