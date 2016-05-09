@@ -25,6 +25,8 @@ import java.util.Stack;
 
 import com.sun.javafx.stage.StageHelper;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -97,13 +99,28 @@ public class DockTitleBar extends HBox implements EventHandler<MouseEvent> {
         dockNode.close();
       }
     });
-    closeButton.visibleProperty().bind(dockNode.closableProperty());
 
     // create a pane that will stretch to make the buttons right aligned
     Pane fillPane = new Pane();
     HBox.setHgrow(fillPane, Priority.ALWAYS);
 
-    getChildren().addAll(label, fillPane, stateButton, closeButton);
+	  dockNode.closableProperty().addListener( new ChangeListener< Boolean >()
+	  {
+		  @Override public void changed( ObservableValue< ? extends Boolean > observable, Boolean oldValue, Boolean newValue )
+		  {
+			  if(newValue)
+			  {
+				  if(!getChildren().contains( closeButton ))
+					getChildren().add(closeButton);
+			  }
+			  else
+			  {
+				  getChildren().removeIf( c -> c.equals( closeButton ) );
+			  }
+		  }
+	  } );
+
+	  getChildren().addAll(label, fillPane, stateButton, closeButton);
 
     this.addEventHandler(MouseEvent.MOUSE_PRESSED, this);
     this.addEventHandler(MouseEvent.DRAG_DETECTED, this);
