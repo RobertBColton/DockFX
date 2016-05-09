@@ -380,7 +380,7 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
 
 	if (pane == null) {
 		sibling = root;
-		dockPos = DockPos.LEFT;
+		dockPos = DockPos.RIGHT;
 		pane = (ContentPane) root;
 	}
 
