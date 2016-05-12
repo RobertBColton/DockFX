@@ -25,6 +25,7 @@ import java.util.Stack;
 
 import com.sun.javafx.css.StyleManager;
 
+import javafx.geometry.Bounds;
 import org.dockfx.pane.ContentPane;
 import org.dockfx.pane.ContentSplitPane;
 import org.dockfx.pane.ContentTabPane;
@@ -517,8 +518,11 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
   public void handle(DockEvent event) {
     if (event.getEventType() == DockEvent.DOCK_ENTER) {
       if (!dockIndicatorOverlay.isShowing()) {
-        Point2D topLeft = DockPane.this.localToScreen(0, 0);
-        dockIndicatorOverlay.show(DockPane.this, topLeft.getX(), topLeft.getY());
+		  Bounds bounds = DockPane.this.getBoundsInParent();
+		  Bounds localBounds = DockPane.this.getBoundsInLocal();
+		  Bounds screenBounds = DockPane.this.localToScreen(localBounds);
+
+		  dockIndicatorOverlay.show(DockPane.this, screenBounds.getMinX(), screenBounds.getMinY() - bounds.getMinY());
       }
     } else if (event.getEventType() == DockEvent.DOCK_OVER) {
       this.receivedEnter = false;
