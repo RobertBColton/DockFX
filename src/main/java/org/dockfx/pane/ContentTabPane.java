@@ -1,7 +1,5 @@
 package org.dockfx.pane;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import org.dockfx.DockNode;
 import org.dockfx.DockPos;
 
@@ -12,7 +10,6 @@ import java.util.stream.Collectors;
 
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 
 /**
