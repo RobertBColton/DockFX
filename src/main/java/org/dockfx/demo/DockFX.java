@@ -26,6 +26,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Random;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import org.dockfx.DockNode;
 import org.dockfx.DockPane;
 import org.dockfx.DockPos;
@@ -111,6 +113,16 @@ public class DockFX extends Application {
     treeDock = new DockNode(generateRandomTree(), "Tree Dock", new ImageView(dockImage));
     treeDock.setPrefSize(100, 100);
     treeDock.dock(dockPane, DockPos.RIGHT);
+
+	// If you want to get notified when the docknode is closed. You can add ChangeListener to DockNode's closedProperty()
+	treeDock.closedProperty().addListener( new ChangeListener< Boolean >()
+	{
+		@Override public void changed( ObservableValue< ? extends Boolean > observable, Boolean oldValue, Boolean newValue )
+		{
+			if(newValue)
+				System.out.println("TreeDock(DockPos.RIGHT) is closed.");
+		}
+	} );
 
     // test the look and feel with both Caspian and Modena
     Application.setUserAgentStylesheet(Application.STYLESHEET_MODENA);
