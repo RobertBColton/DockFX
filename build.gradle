@@ -92,7 +92,7 @@ def getVersionName = {
 }
 
 group = 'org.dockfx'
-version = '0.1.5'
+version = '0.1.6'
 
 
 artifacts
