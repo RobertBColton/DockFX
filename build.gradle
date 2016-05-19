@@ -17,14 +17,14 @@ sourceSets
 		java
 		{ srcDir 'src/main/java' }
 		resources
-		{ srcDir 'src/main/ressources' }
+		{ srcDir 'src/main/resources' }
 	}
 	test
 	{
 		java
-		{ srcDir 'src/main/java' }
+		{ srcDir 'src/test/java' }
 		resources
-		{ srcDir 'src/main/ressources' }
+		{ srcDir 'src/test/resources' }
 	}
 }
 
