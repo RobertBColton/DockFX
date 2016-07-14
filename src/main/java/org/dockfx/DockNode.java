@@ -20,6 +20,8 @@
 
 package org.dockfx;
 
+import org.dockfx.viewControllers.DockFXViewController;
+
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -28,15 +30,18 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.css.PseudoClass;
 import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -78,6 +83,11 @@ public class DockNode extends VBox implements EventHandler<MouseEvent> {
    * The dock pane this dock node belongs to when not floating.
    */
   private DockPane dockPane;
+
+  /**
+   * View controller of node inside this DockNode
+   */
+  private DockFXViewController viewController;
 
   /**
    * CSS pseudo class selector representing whether this node is currently floating.
@@ -133,6 +143,10 @@ public class DockNode extends VBox implements EventHandler<MouseEvent> {
     }
   };
 
+  public DockNode(Node contents, String title, Node graphic, DockFXViewController controller) {
+    initializeDockNode(contents, title, graphic, controller);
+  }
+
   /**
    * Creates a default DockNode with a default title bar and layout.
    * 
@@ -143,16 +157,7 @@ public class DockNode extends VBox implements EventHandler<MouseEvent> {
    *        the title bar and stage.
    */
   public DockNode(Node contents, String title, Node graphic) {
-    this.titleProperty.setValue(title);
-    this.graphicProperty.setValue(graphic);
-    this.contents = contents;
-
-    dockTitleBar = new DockTitleBar(this);
-
-    getChildren().addAll(dockTitleBar, contents);
-    VBox.setVgrow(contents, Priority.ALWAYS);
-
-    this.getStyleClass().add("dock-node");
+    this(contents, title, graphic, null);
   }
 
   /**
@@ -173,6 +178,86 @@ public class DockNode extends VBox implements EventHandler<MouseEvent> {
    */
   public DockNode(Node contents) {
     this(contents, null, null);
+  }
+
+  /**
+   *
+   * Creates a default DockNode with contents loaded from FXMLFile at provided path.
+   *
+   * @param FXMLPath path to fxml file.
+   * @param title The caption title of this dock node which maintains bidirectional state with the
+   * title bar and stage.
+   * @param graphic The caption title of this dock node which maintains bidirectional state with the
+   * title bar and stage.
+   */
+  public DockNode(String FXMLPath, String title, Node graphic) {
+    FXMLLoader loader = loadNode(FXMLPath);
+    initializeDockNode(loader.getRoot(), title, graphic, loader.getController());
+  }
+
+  /**
+   * Creates a default DockNode with contents loaded from FXMLFile at provided path.
+   *
+   * @param FXMLPath path to fxml file.
+   * @param title The caption title of this dock node which maintains bidirectional state with the
+   * title bar and stage.
+   */
+  public DockNode(String FXMLPath, String title) {
+    this(FXMLPath, title, null);
+  }
+
+  /**
+   * Creates a default DockNode with contents loaded from FXMLFile at provided path with default
+   * title bar.
+   *
+   * @param FXMLPath path to fxml file.
+   */
+  public DockNode(String FXMLPath) {
+    this(FXMLPath, null, null);
+  }
+
+  /**
+   * Loads Node from fxml file located at FXMLPath and returns it.
+   *
+   * @param FXMLPath Path to fxml file.
+   * @return Node loaded from fxml file or StackPane with Label with error message.
+   */
+  private static FXMLLoader loadNode(String FXMLPath) {
+    FXMLLoader loader = new FXMLLoader();
+    try {
+      loader.load(DockNode.class.getResourceAsStream(FXMLPath));
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+      loader.setRoot(new StackPane(new Label("Could not load FXML file")));
+    }
+    return loader;
+  }
+
+  /**
+   * Sets DockNodes contents, title and title bar graphic
+   *
+   * @param contents The contents of the dock node which may be a tree or another scene graph node.
+   * @param title The caption title of this dock node which maintains bidirectional state with the
+   * title bar and stage.
+   * @param graphic The caption title of this dock node which maintains bidirectional state with the
+   * title bar and stage.
+   */
+  private void initializeDockNode(Node contents, String title, Node graphic, DockFXViewController controller) {
+    this.titleProperty.setValue(title);
+    this.graphicProperty.setValue(graphic);
+    this.contents = contents;
+    this.viewController = controller;
+
+    dockTitleBar = new DockTitleBar(this);
+    if (viewController != null) {
+      viewController.setDockTitleBar(dockTitleBar);
+    }
+
+    getChildren().addAll(dockTitleBar, contents);
+    VBox.setVgrow(contents, Priority.ALWAYS);
+
+    this.getStyleClass().add("dock-node");
   }
 
   /**
@@ -357,6 +442,15 @@ public class DockNode extends VBox implements EventHandler<MouseEvent> {
    */
   public final DockPane getDockPane() {
     return dockPane;
+  }
+
+  /**
+   * ViewController associated with this dock nodes contents, might be null
+   *
+   * @return ViewController associated with this dock nodes contents
+   */
+  public final DockFXViewController getViewController() {
+    return viewController;
   }
 
   /**
