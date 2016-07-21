@@ -1,5 +1,6 @@
 package org.dockfx.pane;
 
+import java.util.Comparator;
 import org.dockfx.DockNode;
 import org.dockfx.DockPos;
 
@@ -177,5 +178,14 @@ public class ContentSplitPane extends SplitPane implements ContentPane {
         }
       }
     }
+  }
+
+  @Override
+  protected double computeMaxWidth(double height) {
+        if (getOrientation() == Orientation.VERTICAL) {
+            return getItems().stream().map(i -> i.maxWidth(height)).min(Comparator.naturalOrder()).get();
+        }
+        
+        return super.computeMaxWidth(height);
   }
 }
