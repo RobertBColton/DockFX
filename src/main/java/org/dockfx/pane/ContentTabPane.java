@@ -1,5 +1,6 @@
 package org.dockfx.pane;
 
+import java.util.Comparator;
 import org.dockfx.DockNode;
 import org.dockfx.DockPos;
 
@@ -97,5 +98,10 @@ public class ContentTabPane extends TabPane implements ContentPane {
   {
 	  getTabs().add(dockNodeTab);
 	  getSelectionModel().select( dockNodeTab );
+  }
+
+  @Override
+  protected double computeMaxWidth(double height) {
+    return getTabs().stream().map(i -> i.getContent().maxWidth(height)).min(Comparator.naturalOrder()).get();
   }
 }
