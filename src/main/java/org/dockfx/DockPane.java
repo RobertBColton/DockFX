@@ -735,9 +735,12 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
       holder.addProperty("DividerPositions", splitPane.getDividerPositions());
     } else if (pane instanceof ContentTabPane) {
       final String contentTabPaneName = "" + count++;
+      ContentTabPane tabPane = (ContentTabPane) pane;
 
       holder = new ContentHolder(contentTabPaneName, ContentHolder.Type.TabPane);
       contents.put(contentTabPaneName, holder);
+
+      holder.addProperty("SelectedIndex", tabPane.getSelectionModel().getSelectedIndex());
     }
 
     for (Node node : pane.getChildrenList()) {
@@ -858,6 +861,7 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
         }
       }
 
+      tabPane.getSelectionModel().select((int) holder.getProperties().get("SelectedIndex"));
       pane = tabPane;
     }
 
