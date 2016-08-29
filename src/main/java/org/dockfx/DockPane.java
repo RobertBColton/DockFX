@@ -654,6 +654,7 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
     List<DockNode> floatingNodes = new LinkedList<>(undockedNodes);
 
     for (int i = 0; i < floatingNodes.size(); i++) {
+//		System.out.println(floatingNodes.get(i).getTitle());
       ContentHolder
           floatingNode =
           new ContentHolder(floatingNodes.get(i).getTitle(), ContentHolder.Type.FloatingNode);
@@ -829,7 +830,6 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
         node.getStage().setHeight(size[1]);
 
         dockNodes.remove(title);
-		undockedNodes.add(node);
       }
       else {
         System.err.println(item + " is not present.");
