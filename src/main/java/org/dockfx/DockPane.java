@@ -829,6 +829,7 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
         node.getStage().setHeight(size[1]);
 
         dockNodes.remove(title);
+		undockedNodes.add(node);
       }
       else {
         System.err.println(item + " is not present.");
