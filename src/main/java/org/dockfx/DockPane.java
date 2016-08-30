@@ -506,7 +506,8 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
    * @param node The node that is to be removed from this dock pane.
    */
   void undock(DockNode node) {
-    undockedNodes.add(node);
+	if(!node.closedProperty().get())
+      undockedNodes.add(node);
 
     DockNodeEventHandler dockNodeEventHandler = dockNodeEventFilters.get(node);
     node.removeEventFilter(DockEvent.DOCK_OVER, dockNodeEventHandler);
