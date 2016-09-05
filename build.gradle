@@ -83,12 +83,19 @@ if (JavaVersion.current().isJava8Compatible()) {
  */
 def getVersionName = {
 	->
-	def stdout = new ByteArrayOutputStream()
-	exec {
-		commandLine 'git', 'describe', '--tags'
-		standardOutput = stdout
-	}
-	return stdout.toString().trim()
+		try
+    {
+	    def stdout = new ByteArrayOutputStream()
+	    exec {
+	        commandLine 'git', 'describe', '--tags'
+	        standardOutput = stdout
+	    }
+	    return stdout.toString().trim()
+    }
+    catch(Throwable e)
+    {
+    	println e
+    }
 }
 
 group = 'org.dockfx'

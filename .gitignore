@@ -11,3 +11,4 @@ dockfxdemo.jar
 /bin
 target
 .gradle
+/build/
