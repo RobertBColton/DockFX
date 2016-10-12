@@ -545,12 +545,10 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
   public void handle(DockEvent event) {
     if (event.getEventType() == DockEvent.DOCK_ENTER) {
       if (!dockIndicatorOverlay.isShowing()) {
-        Bounds bounds = DockPane.this.getBoundsInParent();
-        Bounds localBounds = DockPane.this.getBoundsInLocal();
-        Bounds screenBounds = DockPane.this.localToScreen(localBounds);
+        Point2D originToScreen = root.localToScreen(0, 0);
 
         dockIndicatorOverlay
-            .show(DockPane.this, screenBounds.getMinX(), screenBounds.getMinY() - bounds.getMinY());
+            .show(DockPane.this, originToScreen.getX(), originToScreen.getY());
       }
     } else if (event.getEventType() == DockEvent.DOCK_OVER) {
       this.receivedEnter = false;
@@ -573,10 +571,11 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
       }
 
       if (dockPosDrag != null && dockAreaDrag != null) {
-        Point2D originToScene = dockAreaDrag.localToScene(0, 0);
+        Point2D originToScene = dockAreaDrag.localToScreen(0, 0);
 
         dockAreaIndicator.setVisible(true);
-        dockAreaIndicator.relocate(originToScene.getX(), originToScene.getY());
+        dockAreaIndicator.relocate(originToScene.getX() - dockIndicatorOverlay.getAnchorX(),
+                originToScene.getY() - dockIndicatorOverlay.getAnchorY());
         if (dockPosDrag == DockPos.RIGHT) {
           dockAreaIndicator.setTranslateX(dockAreaDrag.getLayoutBounds().getWidth() / 2);
         } else {
