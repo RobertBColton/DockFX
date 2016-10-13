@@ -49,6 +49,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.web.HTMLEditor;
 import javafx.stage.Stage;
 
@@ -131,7 +132,10 @@ public class DockFX extends Application {
     BorderPane mainBorderPane = new BorderPane();
     mainBorderPane.setTop(menuBar);
     mainBorderPane.setCenter(dockPane);
-
+    
+    // show that overlays are relative to the docking area
+    mainBorderPane.setLeft(new AnchorPane(generateRandomTree()));
+    
     primaryStage.setScene(new Scene(mainBorderPane, 800, 500));
     primaryStage.sizeToScene();
 
