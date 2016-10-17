@@ -20,9 +20,35 @@
 
 package org.dockfx;
 
+import java.beans.XMLDecoder;
+import java.beans.XMLEncoder;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Scanner;
 import java.util.Stack;
+import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.sun.javafx.css.StyleManager;
+
+import javafx.geometry.Bounds;
+import javafx.scene.control.Tab;
+import javafx.stage.Stage;
+
+import org.dockfx.pane.ContentPane;
+import org.dockfx.pane.ContentSplitPane;
+import org.dockfx.pane.ContentTabPane;
+import org.dockfx.pane.DockNodeTab;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -38,7 +64,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
-import javafx.scene.control.SplitPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
@@ -49,10 +74,11 @@ import javafx.util.Duration;
  * Base class for a dock pane that provides the layout of the dock nodes. Stacking the dock nodes to
  * the center in a TabPane will be added in a future release. For now the DockPane uses the relative
  * sizes of the dock nodes and lays them out in a tree of SplitPanes.
- * 
+ *
  * @since DockFX 0.1
  */
 public class DockPane extends StackPane implements EventHandler<DockEvent> {
+
   /**
    * The current root node of this dock pane's layout.
    */
@@ -104,13 +130,15 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
    */
   private Popup dockIndicatorPopup;
 
+
   /**
    * Base class for a dock indicator button that allows it to be displayed during a dock event and
    * continue to receive input.
-   * 
+   *
    * @since DockFX 0.1
    */
   public class DockPosButton extends Button {
+
     /**
      * Whether this dock indicator button is used for docking a node relative to the root of the
      * dock pane.
@@ -133,9 +161,9 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
     /**
      * Whether this dock indicator button is used for docking a node relative to the root of the
      * dock pane.
-     * 
+     *
      * @param dockRoot Whether this indicator button is used for docking a node relative to the root
-     *        of the dock pane.
+     *                 of the dock pane.
      */
     public final void setDockRoot(boolean dockRoot) {
       this.dockRoot = dockRoot;
@@ -143,7 +171,7 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
 
     /**
      * The docking position indicated by this button.
-     * 
+     *
      * @param dockPos The docking position indicated by this button.
      */
     public final void setDockPos(DockPos dockPos) {
@@ -152,7 +180,7 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
 
     /**
      * The docking position indicated by this button.
-     * 
+     *
      * @return The docking position indicated by this button.
      */
     public final DockPos getDockPos() {
@@ -162,9 +190,9 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
     /**
      * Whether this dock indicator button is used for docking a node relative to the root of the
      * dock pane.
-     * 
+     *
      * @return Whether this indicator button is used for docking a node relative to the root of the
-     *         dock pane.
+     * dock pane.
      */
     public final boolean isDockRoot() {
       return dockRoot;
@@ -177,6 +205,7 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
    */
   private ObservableList<DockPosButton> dockPosButtons;
 
+  private ObservableList<DockNode> undockedNodes;
 
   /**
    * Creates a new DockPane adding event handlers for dock events and creating the indicator
@@ -253,18 +282,19 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
     dockLeftRoot.getStyleClass().add("dock-left-root");
 
     // TODO: dockCenter goes first when tabs are added in a future version
-    dockPosButtons = FXCollections.observableArrayList(dockTop, dockRight, dockBottom, dockLeft,
-        dockTopRoot, dockRightRoot, dockBottomRoot, dockLeftRoot);
+    dockPosButtons =
+        FXCollections.observableArrayList(dockCenter, dockTop, dockRight, dockBottom, dockLeft,
+                                          dockTopRoot, dockRightRoot, dockBottomRoot, dockLeftRoot);
 
     dockPosIndicator = new GridPane();
     dockPosIndicator.add(dockTop, 1, 0);
     dockPosIndicator.add(dockRight, 2, 1);
     dockPosIndicator.add(dockBottom, 1, 2);
     dockPosIndicator.add(dockLeft, 0, 1);
-    // dockPosIndicator.add(dockCenter, 1, 1);
+    dockPosIndicator.add(dockCenter, 1, 1);
 
     dockRootPane.getChildren().addAll(dockAreaIndicator, dockTopRoot, dockRightRoot, dockBottomRoot,
-        dockLeftRoot);
+                                      dockLeftRoot);
 
     dockIndicatorOverlay.getContent().add(dockRootPane);
     dockIndicatorPopup.getContent().addAll(dockPosIndicator);
@@ -273,14 +303,16 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
     dockRootPane.getStyleClass().add("dock-root-pane");
     dockPosIndicator.getStyleClass().add("dock-pos-indicator");
     dockAreaIndicator.getStyleClass().add("dock-area-indicator");
+
+    undockedNodes = FXCollections.observableArrayList();
   }
 
   /**
    * The Timeline used to animate the docking area indicator in the dock indicator overlay for this
    * dock pane.
-   * 
+   *
    * @return The Timeline used to animate the docking area indicator in the dock indicator overlay
-   *         for this dock pane.
+   * for this dock pane.
    */
   public final Timeline getDockAreaStrokeTimeline() {
     return dockAreaStrokeTimeline;
@@ -288,7 +320,7 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
 
   /**
    * Helper function to retrieve the URL of the default style sheet used by DockFX.
-   * 
+   *
    * @return The URL of the default style sheet used by DockFX.
    */
   public final static String getDefaultUserAgentStyleheet() {
@@ -314,10 +346,11 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
    * A wrapper to the type parameterized generic EventHandler that allows us to remove it from its
    * listener when the dock node becomes detached. It is specifically used to monitor which dock
    * node in this dock pane's layout we are currently dragging over.
-   * 
+   *
    * @since DockFX 0.1
    */
   private class DockNodeEventHandler implements EventHandler<DockEvent> {
+
     /**
      * The node associated with this event handler that reports to the encapsulating dock pane.
      */
@@ -326,9 +359,9 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
     /**
      * Creates a default dock node event handler that will help this dock pane track the current
      * docking area.
-     * 
+     *
      * @param node The node that is to listen for docking events and report to the encapsulating
-     *        docking pane.
+     *             docking pane.
      */
     public DockNodeEventHandler(Node node) {
       this.node = node;
@@ -344,142 +377,138 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
    * Dock the node into this dock pane at the given docking position relative to the sibling in the
    * layout. This is used to relatively position the dock nodes to other nodes given their preferred
    * size.
-   * 
-   * @param node The node that is to be docked into this dock pane.
+   *
+   * @param node    The node that is to be docked into this dock pane.
    * @param dockPos The docking position of the node relative to the sibling.
    * @param sibling The sibling of this node in the layout.
    */
-  public void dock(Node node, DockPos dockPos, Node sibling) {
+  void dock(Node node, DockPos dockPos, Node sibling) {
     DockNodeEventHandler dockNodeEventHandler = new DockNodeEventHandler(node);
     dockNodeEventFilters.put(node, dockNodeEventHandler);
     node.addEventFilter(DockEvent.DOCK_OVER, dockNodeEventHandler);
 
-    SplitPane split = (SplitPane) root;
-    if (split == null) {
-      split = new SplitPane();
-      split.getItems().add(node);
-      root = split;
+    ContentPane pane = (ContentPane) root;
+    if (pane == null) {
+      pane = new ContentSplitPane(node);
+      root = (Node) pane;
       this.getChildren().add(root);
       return;
     }
 
-    // find the parent of the sibling
     if (sibling != null && sibling != root) {
-      Stack<Parent> stack = new Stack<Parent>();
+      Stack<Parent> stack = new Stack<>();
       stack.push((Parent) root);
-      while (!stack.isEmpty()) {
-        Parent parent = stack.pop();
+      pane = pane.getSiblingParent(stack, sibling);
+    }
 
-        ObservableList<Node> children = parent.getChildrenUnmodifiable();
+    if (pane == null) {
+      sibling = root;
+      dockPos = DockPos.RIGHT;
+      pane = (ContentPane) root;
+    }
 
-        if (parent instanceof SplitPane) {
-          SplitPane splitPane = (SplitPane) parent;
-          children = splitPane.getItems();
-        }
+    if (dockPos == DockPos.CENTER) {
+      if (pane instanceof ContentSplitPane) {
+        // Create a ContentTabPane with two nodes
+        DockNode siblingNode = (DockNode) sibling;
+        DockNode newNode = (DockNode) node;
 
-        for (int i = 0; i < children.size(); i++) {
-          if (children.get(i) == sibling) {
-            split = (SplitPane) parent;
-          } else if (children.get(i) instanceof Parent) {
-            stack.push((Parent) children.get(i));
+        ContentTabPane tabPane = new ContentTabPane();
+
+        tabPane.addDockNodeTab(new DockNodeTab(siblingNode));
+        tabPane.addDockNodeTab(new DockNodeTab(newNode));
+
+        tabPane.setContentParent(pane);
+
+        double[] pos = ((ContentSplitPane) pane).getDividerPositions();
+        pane.set(sibling, tabPane);
+        ((ContentSplitPane) pane).setDividerPositions(pos);
+      }
+    } else {
+      // Otherwise, SplitPane is assumed.
+      Orientation requestedOrientation = (dockPos == DockPos.LEFT || dockPos == DockPos.RIGHT)
+                                         ? Orientation.HORIZONTAL : Orientation.VERTICAL;
+
+      if (pane instanceof ContentSplitPane) {
+        ContentSplitPane split = (ContentSplitPane) pane;
+
+        // if the orientation is different then reparent the split pane
+        if (split.getOrientation() != requestedOrientation) {
+          if (split.getItems().size() > 1) {
+            ContentSplitPane splitPane = new ContentSplitPane();
+
+            if (split == root && sibling == root) {
+              this.getChildren().set(this.getChildren().indexOf(root), splitPane);
+              splitPane.getItems().add(split);
+              root = splitPane;
+            } else {
+              split.set(sibling, splitPane);
+              splitPane.setContentParent(split);
+              splitPane.getItems().add(sibling);
+            }
+
+            split = splitPane;
           }
+          split.setOrientation(requestedOrientation);
+          pane = split;
         }
-      }
-    }
 
-    Orientation requestedOrientation = (dockPos == DockPos.LEFT || dockPos == DockPos.RIGHT)
-        ? Orientation.HORIZONTAL : Orientation.VERTICAL;
+      } else if (pane instanceof ContentTabPane) {
+        ContentSplitPane split = (ContentSplitPane) pane.getContentParent();
 
-    // if the orientation is different then reparent the split pane
-    if (split.getOrientation() != requestedOrientation) {
-      if (split.getItems().size() > 1) {
-        SplitPane splitPane = new SplitPane();
-        if (split == root && sibling == root) {
-          this.getChildren().set(this.getChildren().indexOf(root), splitPane);
-          splitPane.getItems().add(split);
-          root = splitPane;
+        // if the orientation is different then reparent the split pane
+        if (split.getOrientation() != requestedOrientation) {
+          ContentSplitPane splitPane = new ContentSplitPane();
+          if (split == root && sibling == root) {
+            this.getChildren().set(this.getChildren().indexOf(root), splitPane);
+            splitPane.getItems().add(split);
+            root = splitPane;
+          } else {
+            pane.setContentParent(splitPane);
+            sibling = (Node) pane;
+            split.set(sibling, splitPane);
+            splitPane.setContentParent(split);
+            splitPane.getItems().add(sibling);
+          }
+          split = splitPane;
         } else {
-          split.getItems().set(split.getItems().indexOf(sibling), splitPane);
-          splitPane.getItems().add(sibling);
+          sibling = (Node) pane;
         }
 
-        split = splitPane;
-      }
-      split.setOrientation(requestedOrientation);
-    }
-
-    // finally dock the node to the correct split pane
-    ObservableList<Node> splitItems = split.getItems();
-
-    double magnitude = 0;
-
-    if (splitItems.size() > 0) {
-      if (split.getOrientation() == Orientation.HORIZONTAL) {
-        for (Node splitItem : splitItems) {
-          magnitude += splitItem.prefWidth(0);
-        }
-      } else {
-        for (Node splitItem : splitItems) {
-          magnitude += splitItem.prefHeight(0);
-        }
+        split.setOrientation(requestedOrientation);
+        pane = split;
       }
     }
 
-    if (dockPos == DockPos.LEFT || dockPos == DockPos.TOP) {
-      int relativeIndex = 0;
-      if (sibling != null && sibling != root) {
-        relativeIndex = splitItems.indexOf(sibling);
-      }
+    // Add a node to the proper pane
+    pane.addNode(root, sibling, node, dockPos);
 
-      splitItems.add(relativeIndex, node);
-
-      if (splitItems.size() > 1) {
-        if (split.getOrientation() == Orientation.HORIZONTAL) {
-          split.setDividerPosition(relativeIndex,
-              node.prefWidth(0) / (magnitude + node.prefWidth(0)));
-        } else {
-          split.setDividerPosition(relativeIndex,
-              node.prefHeight(0) / (magnitude + node.prefHeight(0)));
-        }
-      }
-    } else if (dockPos == DockPos.RIGHT || dockPos == DockPos.BOTTOM) {
-      int relativeIndex = splitItems.size();
-      if (sibling != null && sibling != root) {
-        relativeIndex = splitItems.indexOf(sibling) + 1;
-      }
-
-      splitItems.add(relativeIndex, node);
-      if (splitItems.size() > 1) {
-        if (split.getOrientation() == Orientation.HORIZONTAL) {
-          split.setDividerPosition(relativeIndex - 1,
-              1 - node.prefWidth(0) / (magnitude + node.prefWidth(0)));
-        } else {
-          split.setDividerPosition(relativeIndex - 1,
-              1 - node.prefHeight(0) / (magnitude + node.prefHeight(0)));
-        }
-      }
+    if (undockedNodes.contains(node)) {
+      undockedNodes.remove(node);
     }
-
   }
 
   /**
    * Dock the node into this dock pane at the given docking position relative to the root in the
    * layout. This is used to relatively position the dock nodes to other nodes given their preferred
    * size.
-   * 
-   * @param node The node that is to be docked into this dock pane.
+   *
+   * @param node    The node that is to be docked into this dock pane.
    * @param dockPos The docking position of the node relative to the sibling.
    */
-  public void dock(Node node, DockPos dockPos) {
+  void dock(Node node, DockPos dockPos) {
     dock(node, dockPos, root);
   }
 
   /**
    * Detach the node from this dock pane removing it from the layout.
-   * 
+   *
    * @param node The node that is to be removed from this dock pane.
    */
-  public void undock(DockNode node) {
+  void undock(DockNode node) {
+	if(!node.closedProperty().get())
+      undockedNodes.add(node);
+
     DockNodeEventHandler dockNodeEventHandler = dockNodeEventFilters.get(node);
     node.removeEventFilter(DockEvent.DOCK_OVER, dockNodeEventHandler);
     dockNodeEventFilters.remove(node);
@@ -487,61 +516,39 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
     // depth first search to find the parent of the node
     Stack<Parent> findStack = new Stack<Parent>();
     findStack.push((Parent) root);
+
     while (!findStack.isEmpty()) {
       Parent parent = findStack.pop();
 
-      ObservableList<Node> children = parent.getChildrenUnmodifiable();
+      if (parent instanceof ContentPane) {
+        ContentPane pane = (ContentPane) parent;
+        pane.removeNode(findStack, node);
 
-      if (parent instanceof SplitPane) {
-        SplitPane split = (SplitPane) parent;
-        children = split.getItems();
-      }
+        // if there is only 1-tab left, we replace it with the SplitPane
+        if (pane.getChildrenList().size() == 1 &&
+            pane instanceof ContentTabPane &&
+            pane.getChildrenList().get(0) instanceof DockNode) {
 
-      for (int i = 0; i < children.size(); i++) {
-        if (children.get(i) == node) {
-          children.remove(i);
+          List<Node> children = pane.getChildrenList();
+          Node sibling = children.get(0);
+          ContentPane contentParent = pane.getContentParent();
 
-          // start from the root again and remove any SplitPane's with no children in them
-          Stack<Parent> clearStack = new Stack<Parent>();
-          clearStack.push((Parent) root);
-          while (!clearStack.isEmpty()) {
-            parent = clearStack.pop();
-
-            children = parent.getChildrenUnmodifiable();
-
-            if (parent instanceof SplitPane) {
-              SplitPane split = (SplitPane) parent;
-              children = split.getItems();
-            }
-
-            for (i = 0; i < children.size(); i++) {
-              if (children.get(i) instanceof SplitPane) {
-                SplitPane split = (SplitPane) children.get(i);
-                if (split.getItems().size() < 1) {
-                  children.remove(i);
-                  continue;
-                } else {
-                  clearStack.push(split);
-                }
-              }
-
-            }
-          }
-
-          return;
-        } else if (children.get(i) instanceof Parent) {
-          findStack.push((Parent) children.get(i));
+          contentParent.set((Node) pane, sibling);
+          ((DockNode) sibling).tabbedProperty().setValue(false);
         }
       }
     }
+
   }
 
   @Override
   public void handle(DockEvent event) {
     if (event.getEventType() == DockEvent.DOCK_ENTER) {
       if (!dockIndicatorOverlay.isShowing()) {
-        Point2D topLeft = DockPane.this.localToScreen(0, 0);
-        dockIndicatorOverlay.show(DockPane.this, topLeft.getX(), topLeft.getY());
+        Point2D originToScreen = root.localToScreen(0, 0);
+
+        dockIndicatorOverlay
+            .show(DockPane.this, originToScreen.getX(), originToScreen.getY());
       }
     } else if (event.getEventType() == DockEvent.DOCK_OVER) {
       this.receivedEnter = false;
@@ -563,11 +570,12 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
         }
       }
 
-      if (dockPosDrag != null) {
-        Point2D originToScene = dockAreaDrag.localToScene(0, 0);
+      if (dockPosDrag != null && dockAreaDrag != null) {
+        Point2D originToScene = dockAreaDrag.localToScreen(0, 0);
 
         dockAreaIndicator.setVisible(true);
-        dockAreaIndicator.relocate(originToScene.getX(), originToScene.getY());
+        dockAreaIndicator.relocate(originToScene.getX() - dockIndicatorOverlay.getAnchorX(),
+                originToScene.getY() - dockIndicatorOverlay.getAnchorY());
         if (dockPosDrag == DockPos.RIGHT) {
           dockAreaIndicator.setTranslateX(dockAreaDrag.getLayoutBounds().getWidth() / 2);
         } else {
@@ -598,9 +606,9 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
         Point2D originToScreen = dockNodeDrag.localToScreen(0, 0);
 
         double posX = originToScreen.getX() + dockNodeDrag.getLayoutBounds().getWidth() / 2
-            - dockPosIndicator.getWidth() / 2;
+                      - dockPosIndicator.getWidth() / 2;
         double posY = originToScreen.getY() + dockNodeDrag.getLayoutBounds().getHeight() / 2
-            - dockPosIndicator.getHeight() / 2;
+                      - dockPosIndicator.getHeight() / 2;
 
         if (!dockIndicatorPopup.isShowing()) {
           dockIndicatorPopup.show(DockPane.this, posX, posY);
@@ -625,10 +633,285 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
 
     if ((event.getEventType() == DockEvent.DOCK_EXIT && !this.receivedEnter)
         || event.getEventType() == DockEvent.DOCK_RELEASED) {
-      if (dockIndicatorPopup.isShowing()) {
+      if (dockIndicatorOverlay.isShowing()) {
         dockIndicatorOverlay.hide();
+      }
+      if (dockIndicatorPopup.isShowing()) {
         dockIndicatorPopup.hide();
       }
     }
+  }
+
+  public void storePreference(String filePath) {
+    ContentPane pane = (ContentPane) root;
+
+    HashMap<String, ContentHolder> contents = new HashMap<>();
+
+    // Floating Nodes collection
+    contents
+        .put("_FloatingNodes", new ContentHolder("_FloatingNodes", ContentHolder.Type.Collection));
+
+    List<DockNode> floatingNodes = new LinkedList<>(undockedNodes);
+
+    for (int i = 0; i < floatingNodes.size(); i++) {
+//		System.out.println(floatingNodes.get(i).getTitle());
+      ContentHolder
+          floatingNode =
+          new ContentHolder(floatingNodes.get(i).getTitle(), ContentHolder.Type.FloatingNode);
+      floatingNode.addProperty("Title", floatingNodes.get(i).getTitle());
+      floatingNode.addProperty("Size", new Double[]{
+          floatingNodes.get(i).getLayoutBounds().getWidth(),
+          floatingNodes.get(i).getLayoutBounds().getHeight()
+      });
+
+      Point2D
+          loc =
+          floatingNodes.get(i).localToScreen(floatingNodes.get(i).getLayoutBounds().getMinX(),
+                                             floatingNodes.get(i).getLayoutBounds().getMinY());
+
+      floatingNode.addProperty("Position", new Double[]{
+          loc.getX(), loc.getY()
+      });
+
+      contents.get("_FloatingNodes").addChild(floatingNode);
+    }
+
+    // Prepare Docking Nodes collection
+    List<DockNode> dockingNodes = new LinkedList<>();
+
+    Integer count = 0;
+
+    checkPane(contents, pane, dockingNodes, count);
+
+    contents.get("0").addProperty("Size", new Double[]{this.getScene().getWindow().getWidth(),
+                                                       this.getScene().getWindow().getHeight()});
+    contents.get("0").addProperty("Position", new Double[]{this.getScene().getWindow().getX(),
+                                                           this.getScene().getWindow().getY()});
+
+    storeCollection(filePath, contents);
+  }
+
+  private Object loadCollection(String fileName) {
+    XMLDecoder e = null;
+    try {
+      e = new XMLDecoder(
+          new BufferedInputStream(
+              new FileInputStream(fileName)));
+    } catch (FileNotFoundException e1) {
+      e1.printStackTrace();
+    }
+
+    Object collection = e.readObject();
+
+    e.close();
+
+    return collection;
+  }
+
+  private void storeCollection(String fileName, Object collection) {
+    XMLEncoder e = null;
+    try {
+      e = new XMLEncoder(
+          new BufferedOutputStream(
+              new FileOutputStream(fileName)));
+    } catch (FileNotFoundException e1) {
+      e1.printStackTrace();
+    }
+
+    e.writeObject(collection);
+
+    e.close();
+  }
+
+  private ContentHolder checkPane(HashMap<String, ContentHolder> contents, ContentPane pane,
+                                  List<DockNode> dockingNodes, Integer count) {
+    ContentHolder holder = null;
+    if (pane instanceof ContentSplitPane) {
+      final String contentSplitPaneName = "" + count++;
+      ContentSplitPane splitPane = (ContentSplitPane) pane;
+
+      holder = new ContentHolder(contentSplitPaneName, ContentHolder.Type.SplitPane);
+      contents.put(contentSplitPaneName, holder);
+
+      holder.addProperty("Orientation", splitPane.getOrientation());
+      holder.addProperty("DividerPositions", splitPane.getDividerPositions());
+    } else if (pane instanceof ContentTabPane) {
+      final String contentTabPaneName = "" + count++;
+      ContentTabPane tabPane = (ContentTabPane) pane;
+
+      holder = new ContentHolder(contentTabPaneName, ContentHolder.Type.TabPane);
+      contents.put(contentTabPaneName, holder);
+
+      holder.addProperty("SelectedIndex", tabPane.getSelectionModel().getSelectedIndex());
+    }
+
+    for (Node node : pane.getChildrenList()) {
+      if (node instanceof DockNode) {
+        dockingNodes.add((DockNode) node);
+        holder.addChild(((DockNode) node).getTitle());
+//        System.out.println( ( ( DockNode ) node ).getTitle() );
+      }
+//      else
+//      {
+//        System.out.println( node.getClass().getCanonicalName() );
+//      }
+
+      if (node instanceof ContentPane) {
+        holder.addChild(checkPane(contents, (ContentPane) node, dockingNodes, count));
+      }
+    }
+
+    return holder;
+  }
+
+  public void loadPreference(String filePath) {
+    loadPreference(filePath, null);
+  }
+
+  public void loadPreference(String filePath, DelayOpenHandler delayOpenHandler)
+  {
+    HashMap<String, ContentHolder>
+        contents =
+        (HashMap<String, ContentHolder>) loadCollection(filePath);
+
+    applyPane(contents, (ContentPane) root, delayOpenHandler);
+  }
+
+  private void collectDockNodes(HashMap<String, DockNode> dockNodes, ContentPane pane) {
+    for (Node node : pane.getChildrenList()) {
+      if (node instanceof DockNode) {
+        dockNodes.put(((DockNode) node).getTitle(), (DockNode) node);
+      }
+
+      if (node instanceof ContentPane) {
+        collectDockNodes(dockNodes, (ContentPane) node);
+      }
+    }
+  }
+
+  private void applyPane(HashMap<String, ContentHolder> contents, ContentPane root, DelayOpenHandler delayOpenHandler) {
+    // Collect the current pane information
+    HashMap<String, DockNode> dockNodes = new HashMap<>();
+
+    // undockNodes
+    for (DockNode node : undockedNodes) {
+      dockNodes.put(node.getTitle(), node);
+    }
+
+    collectDockNodes(dockNodes, root);
+
+    Double[] windowSize = (Double[]) contents.get("0").getProperties().get("Size");
+    Double[] windowPosition = (Double[]) contents.get("0").getProperties().get("Position");
+
+    Stage currentStage = (Stage) this.getScene().getWindow();
+    currentStage.setX(windowPosition[0]);
+    currentStage.setY(windowPosition[1]);
+
+    currentStage.setWidth(windowSize[0]);
+    currentStage.setHeight(windowSize[1]);
+
+    // Set floating docks according to the preference data
+    for (Object item : contents.get("_FloatingNodes").getChildren()) {
+      ContentHolder holder = (ContentHolder) item;
+      String title = holder.getProperties().getProperty("Title");
+      Double[] size = (Double[]) holder.getProperties().get("Size");
+      Double[] position = (Double[]) holder.getProperties().get("Position");
+      DockNode node = dockNodes.get(title);
+      if(null == node && null != delayOpenHandler)
+        node = delayOpenHandler.open(title);
+
+      if(null != node) {
+        node.setFloating(true, null);
+
+        node.getStage().setX(position[0]);
+        node.getStage().setY(position[1]);
+
+	  	node.getStage().setWidth(size[0]);
+        node.getStage().setHeight(size[1]);
+
+        dockNodes.remove(title);
+      }
+      else {
+        System.err.println(item + " is not present.");
+      }
+    }
+
+    // Restore dock location based on the preferences
+    // Make it sorted
+    ContentHolder rootHolder = contents.get("0");
+    Node newRoot = buildPane(rootHolder, dockNodes, delayOpenHandler);
+
+    this.root = newRoot;
+    this.getChildren().set(0, this.root);
+  }
+
+  private Node buildPane(ContentHolder holder, HashMap<String, DockNode> dockNodes, DelayOpenHandler delayOpenHandler) {
+    Node pane = null;
+    if (holder.getType().equals(ContentHolder.Type.SplitPane)) {
+      ContentSplitPane splitPane = new ContentSplitPane();
+      splitPane.setOrientation((Orientation) holder.getProperties().get("Orientation"));
+      splitPane.setDividerPositions((double[]) holder.getProperties().get("DividerPositions"));
+
+      for (Object item : holder.getChildren()) {
+        if (item instanceof String) {
+          // Use dock node
+          if(dockNodes.containsKey(item)) {
+            DockNode n = dockNodes.get(item);
+            if (n.tabbedProperty().get()) {
+              n.tabbedProperty().set(false);
+            }
+
+            splitPane.getItems().add(dockNodes.get(item));
+          }
+          else
+          {
+            // If delayOpenHandler is provided, we call it
+            if(delayOpenHandler != null) {
+              DockNode newNode = delayOpenHandler.open((String) item);
+              if (newNode.tabbedProperty().get()) {
+                newNode.tabbedProperty().set(false);
+              }
+
+              newNode.dockedProperty().set(true);
+              splitPane.getItems().add(newNode);
+            } else
+              System.err.println(item + " is not present.");
+          }
+        } else if (item instanceof ContentHolder) {
+          // Call this function recursively
+          splitPane.getItems().add(buildPane((ContentHolder) item, dockNodes, delayOpenHandler));
+        }
+      }
+
+      pane = splitPane;
+    } else if (holder.getType().equals(ContentHolder.Type.TabPane)) {
+      ContentTabPane tabPane = new ContentTabPane();
+
+      for (Object item : holder.getChildren()) {
+        if (item instanceof String) {
+          // Use dock node
+          if(dockNodes.containsKey(item)) {
+            tabPane.addDockNodeTab(new DockNodeTab(dockNodes.get(item)));
+          }
+          else
+          {
+            // If delayOpenHandler is provided, we call it
+            if(null != delayOpenHandler)
+            {
+              DockNode newNode = delayOpenHandler.open((String) item);
+              newNode.dockedProperty().set(true);
+              tabPane.addDockNodeTab(new DockNodeTab(newNode));
+            }
+            else
+              System.err.println(item + " is not present.");
+          }
+        }
+      }
+
+      tabPane.getSelectionModel().select((int) holder.getProperties().get("SelectedIndex"));
+      pane = tabPane;
+    }
+
+    return pane;
   }
 }

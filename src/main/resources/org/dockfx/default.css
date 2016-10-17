@@ -127,15 +127,18 @@
   -fx-background-color: -fx-background;
 }
 
+/* In order to support TabPane, titleBar's background color is transparent
+ */
 .dock-title-bar {
-  -fx-background-color: -fx-background;
+  -fx-background-color: transparent;
   -fx-padding: 2;
   -fx-spacing: 3;
-  -fx-border-width: 1;
+  -fx-border-width: 0;
   -fx-border-color: -fx-outer-border;
 }
 
 .dock-title-label {
+  -fx-background-color: transparent;
   -fx-graphic: url(docknode.png);
   -fx-padding: 0 0 3 0;
   -fx-text-fill: -fx-text-base-color;
@@ -168,4 +171,8 @@
 
 .dock-close-button {
   -fx-graphic: url(close.png);
+}
+
+.dock-minimize-button {
+  -fx-graphic: url(minimize.png);
 }

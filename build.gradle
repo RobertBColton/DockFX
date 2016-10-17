@@ -1,0 +1,179 @@
+plugins { id "com.jfrog.bintray" version "1.2" }
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+
+
+//***********************************************************************************
+// JAVA CODE BUILDING
+
+sourceSets
+{
+	main
+	{
+		java
+		{ srcDir 'src/main/java' }
+		resources
+		{ srcDir 'src/main/resources' }
+	}
+	test
+	{
+		java
+		{ srcDir 'src/test/java' }
+		resources
+		{ srcDir 'src/test/resources' }
+	}
+}
+
+sourceCompatibility = 1.8
+
+test
+{
+	testLogging.showStandardStreams = true
+	testLogging
+	{ events "passed", "skipped", "failed" }
+
+	exclude '**/demo/**'
+	exclude '**/run/**'
+
+	maxHeapSize = "4G"
+}
+
+dependencies
+{
+
+
+}
+
+repositories
+{
+	mavenCentral()
+	maven { url  "http://oss.sonatype.org/content/groups/public"  }
+	maven {url  "http://dl.bintray.com/clearcontrol/ClearControl" }
+}
+
+
+task sourcesJar(type: Jar, dependsOn:classes) {
+	classifier = 'sources'
+	from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn:javadoc) {
+	classifier = 'javadoc'
+	from javadoc.destinationDir
+}
+
+if (JavaVersion.current().isJava8Compatible()) {
+	allprojects {
+		tasks.withType(Javadoc) {
+			options.addStringOption('Xdoclint:none', '-quiet')
+		}
+	}
+}
+
+//***********************************************************************************
+// PUBLISHING
+
+
+/*
+ * Gets the version name from the latest Git tag
+ */
+def getVersionName = {
+	->
+		try
+    {
+	    def stdout = new ByteArrayOutputStream()
+	    exec {
+	        commandLine 'git', 'describe', '--tags'
+	        standardOutput = stdout
+	    }
+	    return stdout.toString().trim()
+    }
+    catch(Throwable e)
+    {
+    	println e
+    }
+}
+
+group = 'org.dockfx'
+version = getVersionName()
+
+
+artifacts
+{
+	archives sourcesJar
+	archives javadocJar
+}
+
+publishing {
+	publications {
+		maven(MavenPublication) {
+			from components.java
+			artifact sourcesJar { classifier "sources" }
+		}
+	}
+}
+
+if(hasProperty('bintray_user') && hasProperty('bintray_key') )
+{
+	bintray {
+
+		// property must be set in ~/.gradle/gradle.properties
+		user = bintray_user
+		key =  bintray_key
+
+		publications = [
+			'maven'] //When uploading configuration files
+		dryRun = false //Whether to run this as dry-run, without deploying
+		publish = true //If version should be auto published after an upload
+		pkg {
+			repo = 'ClearControl'
+			userOrg = 'clearcontrol' //An optional organization name when the repo belongs to one of the user's orgs
+			name = 'DockFX'
+			desc = 'DockFX'
+			websiteUrl = 'https://github.com/ClearControl/DockFX'
+			issueTrackerUrl = 'https://github.com/ClearControl/DockFX/issues'
+			vcsUrl = 'https://github.com/ClearControl/DockFX.git'
+			licenses = ['GPL-3.0']
+			labels = [
+				'DockFX',
+				'GUI'
+			]
+			publicDownloadNumbers = true
+			//attributes= ['a': ['ay1', 'ay2'], 'b': ['bee'], c: 'cee'] //Optional package-level attributes
+			//Optional version descriptor
+			version {
+				name = project.version //Bintray logical version name
+				desc = '.'
+				released  = new java.util.Date()
+				vcsTag = 'v' + project.version
+				/*attributes = ['gradle-plugin': 'com.use.less:com.use.less.gradle:gradle-useless-plugin'] //Optional version-level attributes
+				 gpg {
+				 sign = false //Determines whether to GPG sign the files. The default is false
+				 passphrase = 'passphrase' //Optional. The passphrase for GPG signing'
+				 }
+				 mavenCentralSync {
+				 sync = false //Optional (true by default). Determines whether to sync the version to Maven Central.
+				 user = 'userToken' //OSS user token
+				 password = 'paasword' //OSS user password
+				 close = '1' //Optional property. By default the staging repository is closed and artifacts are released to Maven Central. You can optionally turn this behaviour off (by puting 0 as value) and release the version manually.
+				 }  /**/          
+			}
+		}
+		/**/
+	}
+}
+
+
+
+
+
+
+
+
+
+
+

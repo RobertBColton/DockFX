@@ -21,11 +21,20 @@
 
 package org.dockfx.demo;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Random;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.layout.BorderPane;
 import org.dockfx.DockNode;
 import org.dockfx.DockPane;
 import org.dockfx.DockPos;
@@ -40,8 +49,11 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.web.HTMLEditor;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 public class DockFX extends Application {
 
@@ -98,19 +110,62 @@ public class DockFX extends Application {
     tableDock.setPrefSize(300, 100);
     tableDock.dock(dockPane, DockPos.BOTTOM);
 
-    primaryStage.setScene(new Scene(dockPane, 800, 500));
-    primaryStage.sizeToScene();
+    MenuItem saveMenuItem = new MenuItem("Save");
+    saveMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+      @Override
+      public void handle(ActionEvent event) {
+        if(dirExist(getUserDataDirectory()))
+          dockPane.storePreference(getUserDataDirectory() + "dock.pref");
+      }
+    });
 
+    MenuItem restoreMenuItem = new MenuItem("Restore");
+    restoreMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+      @Override
+      public void handle(ActionEvent event) {
+        dockPane.loadPreference(getUserDataDirectory() + "dock.pref");
+      }
+    });
+
+    Menu fileMenu = new Menu("File");
+    MenuBar menuBar = new MenuBar(fileMenu);
+    fileMenu.getItems().addAll(saveMenuItem, restoreMenuItem);
+
+    BorderPane mainBorderPane = new BorderPane();
+    mainBorderPane.setTop(menuBar);
+    mainBorderPane.setCenter(dockPane);
+    
+    // show that overlays are relative to the docking area
+    mainBorderPane.setLeft(new AnchorPane(generateRandomTree()));
+    
+    primaryStage.setScene(new Scene(mainBorderPane, 800, 500));
+    primaryStage.sizeToScene();
+    
     primaryStage.show();
+    
+    //Stage s = new Stage(StageStyle.DECORATED);
+    //s.initOwner(primaryStage);
+    
+    //s.show();
 
     // can be created and docked before or after the scene is created
     // and the stage is shown
-    DockNode treeDock = new DockNode(generateRandomTree(), "Tree Dock", new ImageView(dockImage));
+    DockNode treeDock = new DockNode(generateRandomTree(), "Tree Dock1", new ImageView(dockImage));
     treeDock.setPrefSize(100, 100);
     treeDock.dock(dockPane, DockPos.LEFT);
-    treeDock = new DockNode(generateRandomTree(), "Tree Dock", new ImageView(dockImage));
+    treeDock = new DockNode(generateRandomTree(), "Tree Dock2", new ImageView(dockImage));
     treeDock.setPrefSize(100, 100);
     treeDock.dock(dockPane, DockPos.RIGHT);
+
+	// If you want to get notified when the docknode is closed. You can add ChangeListener to DockNode's closedProperty()
+	treeDock.closedProperty().addListener( new ChangeListener< Boolean >()
+	{
+		@Override public void changed( ObservableValue< ? extends Boolean > observable, Boolean oldValue, Boolean newValue )
+		{
+			if(newValue)
+				System.out.println("TreeDock(DockPos.RIGHT) is closed.");
+		}
+	} );
 
     // test the look and feel with both Caspian and Modena
     Application.setUserAgentStylesheet(Application.STYLESHEET_MODENA);
@@ -144,4 +199,23 @@ public class DockFX extends Application {
 
     return treeView;
   }
+
+  public static boolean dirExist(String dir)
+  {
+    String path = getUserDataDirectory();
+    if(!new File(path).exists())
+      return new File(path).mkdirs();
+    else
+      return true;
+  }
+
+  public static String getUserDataDirectory() {
+    return System.getProperty("user.home") + File.separator + ".dockfx" + File.separator
+           + getApplicationVersionString() + File.separator;
+  }
+
+  public static String getApplicationVersionString() {
+    return "1.0";
+  }
+
 }
