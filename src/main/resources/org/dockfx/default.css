@@ -172,3 +172,7 @@
 .dock-close-button {
   -fx-graphic: url(close.png);
 }
+
+.dock-minimize-button {
+  -fx-graphic: url(minimize.png);
+}

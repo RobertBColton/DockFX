@@ -50,8 +50,10 @@ import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.web.HTMLEditor;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 public class DockFX extends Application {
 
@@ -138,8 +140,13 @@ public class DockFX extends Application {
     
     primaryStage.setScene(new Scene(mainBorderPane, 800, 500));
     primaryStage.sizeToScene();
-
+    
     primaryStage.show();
+    
+    //Stage s = new Stage(StageStyle.DECORATED);
+    //s.initOwner(primaryStage);
+    
+    //s.show();
 
     // can be created and docked before or after the scene is created
     // and the stage is shown
