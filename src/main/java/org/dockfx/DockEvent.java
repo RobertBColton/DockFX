@@ -30,7 +30,7 @@ import javafx.scene.Node;
 import javafx.scene.input.PickResult;
 
 /**
- * Base class for DockFX events. Each DockFX event has associated an event source, event target and
+ * Base class for DockFX events. Each DockFX event has an associated event source, event target and
  * an event type. The event source specifies for an event handler the object on which that handler
  * has been registered and which sent the event to it. The event target defines the path through
  * which the event will travel when posted. The event type provides additional classification to

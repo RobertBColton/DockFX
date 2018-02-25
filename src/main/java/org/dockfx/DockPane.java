@@ -20,6 +20,8 @@
 
 package org.dockfx;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 import com.sun.javafx.css.StyleManager;
@@ -53,6 +55,11 @@ import javafx.util.Duration;
  * @since DockFX 0.1
  */
 public class DockPane extends StackPane implements EventHandler<DockEvent> {
+  /**
+   * Package-private internal list of all DockPanes for event mouse picking.
+   */
+  static List<DockPane> dockPanes = new ArrayList<DockPane>();
+
   /**
    * The current root node of this dock pane's layout.
    */
@@ -184,6 +191,7 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
    */
   public DockPane() {
     super();
+    DockPane.dockPanes.add(this);
 
     this.addEventHandler(DockEvent.ANY, this);
     this.addEventFilter(DockEvent.ANY, new EventHandler<DockEvent>() {
