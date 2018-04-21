@@ -92,7 +92,6 @@ public class DockTitleBar extends HBox implements EventHandler<MouseEvent> {
 
     closeButton = new Button();
     closeButton.setOnAction(new EventHandler<ActionEvent>() {
-
       @Override
       public void handle(ActionEvent event) {
         dockNode.close();
@@ -115,7 +114,6 @@ public class DockTitleBar extends HBox implements EventHandler<MouseEvent> {
     closeButton.getStyleClass().add("dock-close-button");
     stateButton.getStyleClass().add("dock-state-button");
     this.getStyleClass().add("dock-title-bar");
-
   }
 
   /**

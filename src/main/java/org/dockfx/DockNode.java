@@ -242,6 +242,12 @@ public class DockNode extends VBox implements EventHandler<MouseEvent> {
       dockTitleBar.setVisible(this.isCustomTitleBar());
       dockTitleBar.setManaged(this.isCustomTitleBar());
 
+      // apply the floating property so we can get its padding size
+      // while it is floating to offset it by the drop shadow
+      // this way it pops out above exactly where it was when docked
+      this.floatingProperty.set(floating);
+      this.applyCss();
+
       if (this.isDocked()) {
         this.undock();
       }
@@ -278,12 +284,6 @@ public class DockNode extends VBox implements EventHandler<MouseEvent> {
       borderPane.setCenter(this);
 
       Scene scene = new Scene(borderPane);
-
-      // apply the floating property so we can get its padding size
-      // while it is floating to offset it by the drop shadow
-      // this way it pops out above exactly where it was when docked
-      this.floatingProperty.set(floating);
-      this.applyCss();
 
       // apply the border pane css so that we can get the insets and
       // position the stage properly
