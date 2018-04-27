@@ -32,14 +32,21 @@ import org.dockfx.DockPos;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.Separator;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.ToolBar;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.scene.web.HTMLEditor;
 import javafx.stage.Stage;
 
@@ -98,7 +105,31 @@ public class DockFX extends Application {
     tableDock.setPrefSize(300, 100);
     tableDock.dock(dockPane, DockPos.BOTTOM);
 
-    primaryStage.setScene(new Scene(dockPane, 800, 500));
+    final Menu menu1 = new Menu("File");
+    final Menu menu2 = new Menu("Options");
+    final Menu menu3 = new Menu("Help");
+
+    MenuBar menuBar = new MenuBar();
+    menuBar.getMenus().addAll(menu1, menu2, menu3);
+
+    ToolBar toolBar = new ToolBar(
+        new Button("New"),
+        new Button("Open"),
+        new Button("Save"),
+        new Separator(),
+        new Button("Clean"),
+        new Button("Compile"),
+        new Button("Run"),
+        new Separator(),
+        new Button("Debug"),
+        new Button("Profile")
+    );
+
+    VBox vbox = new VBox();
+    vbox.getChildren().addAll(menuBar, toolBar, dockPane);
+    VBox.setVgrow(dockPane, Priority.ALWAYS);
+
+    primaryStage.setScene(new Scene(vbox, 800, 500));
     primaryStage.sizeToScene();
 
     primaryStage.show();

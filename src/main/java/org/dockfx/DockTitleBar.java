@@ -24,10 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
 
-import com.sun.javafx.stage.StageHelper;
-
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;

@@ -6,7 +6,7 @@
     <groupId>org.dockfx</groupId>
     <artifactId>dockfx</artifactId>
     <packaging>jar</packaging>
-    <version>0.2-SNAPSHOT</version>
+    <version>0.4-SNAPSHOT</version>
     <name>DockFX</name>
     <url>https://github.com/RobertBColton/DockFX.git</url>
 
