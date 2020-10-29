@@ -5,7 +5,7 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-- script: sudo apt install openjfx=8u161-b12-1ubuntu2 libopenjfx-jni=8u161-b12-1ubuntu2 libopenjfx-java=8u161-b12-1ubuntu2
+- script: sudo apt install openjfx*8u161
   displayName: 'Install OpenJFX for OpenJDK 8'
 - task: Maven@3
   inputs:
