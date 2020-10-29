@@ -5,6 +5,8 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
+- script: sudo apt-get install openjfx
+  displayName: 'Install OpenJFX for OpenJDK 8'
 - task: Maven@3
   inputs:
     mavenPomFile: 'pom.xml'
