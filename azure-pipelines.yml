@@ -5,10 +5,6 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-- script: |
-    sudo apt-get update
-    sudo apt install openjdk-11-jdk openjfx
-  displayName: 'Install Oracle JDK 10 as Default'
 - task: Maven@3
   inputs:
     mavenPomFile: 'pom.xml'
