@@ -9,7 +9,7 @@ steps:
     sudo apt-get update
     sudo apt install openjfx
     sudo apt-get install openjdk-8-jdk
-    sudo update-alternatives --set java
+    sudo update-alternatives --list java
 - task: Maven@3
   inputs:
     mavenPomFile: 'pom.xml'
