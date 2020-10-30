@@ -8,10 +8,6 @@ steps:
 - script: |
     sudo apt-get update
     sudo apt install openjfx
-    sudo apt-get update
-    sudo apt install openjfx=8u161-b12-1ubuntu2 libopenjfx-jni=8u161-b12-1ubuntu2 libopenjfx-java=8u161-b12-1ubuntu2
-    sudo apt-get update
-    sudo apt-mark hold openjfx libopenjfx-jni libopenjfx-java
 - task: Maven@3
   inputs:
     mavenPomFile: 'pom.xml'
