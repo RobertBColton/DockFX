@@ -9,12 +9,12 @@ steps:
     sudo apt-get update
     sudo apt install openjfx
     sudo apt-get install openjdk-8-jdk
-    sudo update-alternatives --set java /usr/lib/jvm/adoptopenjdk-8-hotspot-amd64/bin/java
+    sudo update-alternatives --set java /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
 - task: Maven@3
   inputs:
     mavenPomFile: 'pom.xml'
     mavenOptions: '-Xmx3072m'
-    javaHomeOption: 'JDKVersion'
+    javaHomeOption: '/usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java'
     jdkVersionOption: '1.8'
     jdkArchitectureOption: 'x64'
     publishJUnitResults: true
