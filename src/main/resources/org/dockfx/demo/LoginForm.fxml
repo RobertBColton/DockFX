@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="300.0" prefWidth="180.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.dockfx.viewControllers.LoginFormViewController">
+   <children>
+      <Label layoutX="10.0" layoutY="23.0" text="First name:" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
+      <Label layoutX="14.0" layoutY="40.0" text="Surname:" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="40.0" />
+      <Label layoutX="14.0" layoutY="69.0" text="Street:" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="70.0" />
+      <Label layoutX="14.0" layoutY="99.0" text="City:" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="100.0" />
+      <TextField layoutX="75.0" layoutY="8.0" prefHeight="25.0" prefWidth="95.0" AnchorPane.leftAnchor="75.0" AnchorPane.topAnchor="8.0" />
+      <TextField layoutX="85.0" layoutY="18.0" prefHeight="25.0" prefWidth="95.0" AnchorPane.leftAnchor="75.0" AnchorPane.topAnchor="38.0" />
+      <TextField layoutX="95.0" layoutY="28.0" prefHeight="25.0" prefWidth="95.0" AnchorPane.leftAnchor="75.0" AnchorPane.topAnchor="68.0" />
+      <TextField layoutX="105.0" layoutY="38.0" prefHeight="25.0" prefWidth="95.0" AnchorPane.leftAnchor="75.0" AnchorPane.topAnchor="98.0" />
+      <Separator layoutX="15.0" layoutY="139.0" prefHeight="0.0" prefWidth="152.0" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="139.0" />
+      <Button fx:id="button" layoutX="84.0" layoutY="150.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="82.0" text="Submit" AnchorPane.leftAnchor="84.0" AnchorPane.topAnchor="150.0" />
+   </children>
+</AnchorPane>

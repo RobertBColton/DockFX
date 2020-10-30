@@ -51,6 +51,8 @@ public class DockFX extends Application {
   public void start(Stage primaryStage) {
     primaryStage.setTitle("DockFX");
 
+    primaryStage.setTitle("DockFX");
+
     // create a dock pane that will manage our dock nodes and handle the layout
     DockPane dockPane = new DockPane();
 
@@ -124,12 +126,15 @@ public class DockFX extends Application {
 
     primaryStage.show();
 
+    // loads interface from fxml file
+    DockNode loginDock = new DockNode("demo/LoginForm.fxml", "Personal info", new ImageView(dockImage));
+    loginDock.setPrefSize(100, 100);
+    loginDock.dock(dockPane, DockPos.LEFT);
+
+
     // can be created and docked before or after the scene is created
     // and the stage is shown
     DockNode treeDock = new DockNode(generateRandomTree(), "Tree Dock", new ImageView(dockImage));
-    treeDock.setPrefSize(100, 100);
-    treeDock.dock(dockPane, DockPos.LEFT);
-    treeDock = new DockNode(generateRandomTree(), "Tree Dock", new ImageView(dockImage));
     treeDock.setPrefSize(100, 100);
     treeDock.dock(dockPane, DockPos.RIGHT);
 
