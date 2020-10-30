@@ -6,9 +6,9 @@ pool:
 
 steps:
 - script: |
-    sudo add-apt-repository ppa:linuxuprising/java
+    sudo add-apt-repository ppa:webupd8team/java
     sudo apt-get update
-    sudo apt-get -y install oracle-java10-set-default
+    sudo apt-get -y install oracle-java8-set-default
   displayName: 'Install Oracle JDK 10 as Default'
 - task: Maven@3
   inputs:
