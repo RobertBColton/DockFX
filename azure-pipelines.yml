@@ -14,7 +14,8 @@ steps:
   inputs:
     mavenPomFile: 'pom.xml'
     mavenOptions: '-Xmx3072m'
-    javaHomeOption: '/usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java'
+    javaHomeOption: 'Path'
+    jdkDirectory: '/usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java'
     jdkVersionOption: '1.8'
     jdkArchitectureOption: 'x64'
     publishJUnitResults: true
