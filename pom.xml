@@ -9,19 +9,6 @@
     <version>0.4-SNAPSHOT</version>
     <name>DockFX</name>
     <url>https://github.com/RobertBColton/DockFX.git</url>
-         
-    <dependencies>
-      <dependency>
-          <groupId>org.openjfx</groupId>
-          <artifactId>javafx-controls</artifactId>
-          <version>11</version>
-      </dependency>
-      <dependency>
-        <groupId>org.openjfx</groupId>
-        <artifactId>javafx-web</artifactId>
-        <version>11</version>
-      </dependency>
-    </dependencies>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
