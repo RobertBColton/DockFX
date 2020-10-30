@@ -4,7 +4,7 @@
     http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.dockfx</groupId>
-    <artifactId>javafx</artifactId>
+    <artifactId>dockfx</artifactId>
     <packaging>jar</packaging>
     <version>0.4-SNAPSHOT</version>
     <name>DockFX</name>
@@ -13,7 +13,7 @@
     <dependencies>
       <dependency>
         <groupId>org.openjfx</groupId>
-        <artifactId>javafx-controls</artifactId>
+        <artifactId>javafx</artifactId>
         <version>11</version>
       </dependency>
     </dependencies>
