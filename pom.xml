@@ -12,9 +12,10 @@
          
     <dependencies>
       <dependency>
-        <groupId>org.openjfx</groupId>
-        <artifactId>javafx</artifactId>
-        <version>11</version>
+          <groupId>org.openjfx</groupId>
+          <artifactId>javafx</artifactId>
+          <version>11</version>
+          <type>pom</type>
       </dependency>
     </dependencies>
 
