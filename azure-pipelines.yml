@@ -6,9 +6,10 @@ pool:
 
 steps:
 - script: |
-    sudo add-apt-repository ppa:webupd8team/java
-    sudo apt-get update
-    sudo apt-get install oracle-java8-installer
+    sudo apt install openjfx
+    sudo apt purge openjfx
+    sudo apt install openjfx=8u161-b12-1ubuntu2 libopenjfx-jni=8u161-b12-1ubuntu2 libopenjfx-java=8u161-b12-1ubuntu2
+    sudo apt-mark hold openjfx libopenjfx-jni libopenjfx-java
 - task: Maven@3
   inputs:
     mavenPomFile: 'pom.xml'
