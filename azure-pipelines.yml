@@ -2,9 +2,13 @@ trigger:
 - master
 
 pool:
-  vmImage: 'macOS-latest'
+  vmImage: 'ubuntu-16.04'
 
 steps:
+- script: |
+    sudo add-apt-repository ppa:webupd8team/java
+    sudo apt-get update
+    sudo apt-get install oracle-java9-installer
 - task: Maven@3
   inputs:
     mavenPomFile: 'pom.xml'
