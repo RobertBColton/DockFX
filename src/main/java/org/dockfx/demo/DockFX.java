@@ -16,6 +16,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Random;
 
+import javafx.application.Platform;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import org.dockfx.DockNode;
 import org.dockfx.DockPane;
 import org.dockfx.DockPos;
@@ -64,7 +67,7 @@ public class DockFX extends Application {
     }
 
     // empty tabs ensure that dock node has its own background color when floating
-    tabs.getTabs().addAll(new Tab("Tab 1", htmlEditor), new Tab("Tab 2"), new Tab("Tab 3"));
+    tabs.getTabs().addAll(new Tab("Tab 1"), new Tab("Tab 2"), new Tab("Tab 3"));
 
     TableView<String> tableView = new TableView<String>();
     // this is why @SupressWarnings is used above
@@ -142,6 +145,11 @@ public class DockFX extends Application {
     // this must be called after the primary stage is shown
     // https://bugs.openjdk.java.net/browse/JDK-8132900
     DockPane.initializeDefaultUserAgentStylesheet();
+
+    DockNode welcomeDock = new DockNode(htmlEditor, "Welcome", new ImageView(dockImage));
+    welcomeDock.setMinWidth(600);
+    welcomeDock.setMinHeight(400);
+    welcomeDock.setFloating(true);
 
     // TODO: after this feel free to apply your own global stylesheet using the StyleManager class
   }

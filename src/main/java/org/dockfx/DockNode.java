@@ -258,9 +258,17 @@ public class DockNode extends VBox implements EventHandler<MouseEvent> {
       if (this.isDecorated()) {
         Window owner = stage.getOwner();
         stagePosition = floatScene.add(new Point2D(owner.getX(), owner.getY()));
-      } else {
+      } else if (floatScreen != null) {
+        // using coordinates the component was previously in (if available)
         stagePosition = floatScreen;
+      } else {
+        // using the center of the screen if no relative position is available
+        Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
+        double centerX = (primScreenBounds.getWidth() - Math.max(getWidth(), getMinWidth())) / 2;
+        double centerY = (primScreenBounds.getHeight() - Math.max(getHeight(), getMinHeight())) / 2;
+        stagePosition = new Point2D(centerX, centerY);
       }
+
       if (translation != null) {
         stagePosition = stagePosition.add(translation);
       }
@@ -285,9 +293,6 @@ public class DockNode extends VBox implements EventHandler<MouseEvent> {
 
       stage.setX(stagePosition.getX() - insetsDelta.getLeft());
       stage.setY(stagePosition.getY() - insetsDelta.getTop());
-
-      stage.setMinWidth(borderPane.minWidth(this.getHeight()) + insetsWidth);
-      stage.setMinHeight(borderPane.minHeight(this.getWidth()) + insetsHeight);
 
       borderPane.setPrefSize(this.getWidth() + insetsWidth, this.getHeight() + insetsHeight);
 
