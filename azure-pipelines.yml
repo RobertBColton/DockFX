@@ -5,8 +5,11 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-- script: sudo apt install openjfx*8u161
-  displayName: 'Install OpenJFX for OpenJDK 8'
+- script: |
+    sudo add-apt-repository ppa:webupd8team/java
+    sudo apt-get update
+    sudo apt-get install oracle-java8-installer
+  displayName: 'Install Oracle JDK 8'
 - task: Maven@3
   inputs:
     mavenPomFile: 'pom.xml'
