@@ -6,8 +6,8 @@ pool:
 
 steps:
 - script: |
-    sudo apt-get install oracle-java8-installer
-  displayName: 'Install Oracle JDK 8'
+    sudo apt-get install oracle-java10-set-default
+  displayName: 'Install Oracle JDK 10 as Default'
 - task: Maven@3
   inputs:
     mavenPomFile: 'pom.xml'
