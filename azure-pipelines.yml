@@ -8,15 +8,14 @@ steps:
 - script: |
     sudo apt-get update
     sudo apt install openjfx
-    sudo apt-get install openjdk-8-jdk
-    sudo update-alternatives --set java /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
+    sudo apt-get install openjdk-11-jdk
+    sudo update-alternatives --list java
 - task: Maven@3
   inputs:
     mavenPomFile: 'pom.xml'
     mavenOptions: '-Xmx3072m'
-    javaHomeOption: 'Path'
-    jdkDirectory: '/usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java'
-    jdkVersionOption: '1.8'
+    javaHomeOption: 'JDKVersion'
+    jdkVersionOption: '1.11'
     jdkArchitectureOption: 'x64'
     publishJUnitResults: true
     testResultsFiles: '**/surefire-reports/TEST-*.xml'
