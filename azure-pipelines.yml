@@ -2,15 +2,21 @@ trigger:
 - master
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: 'ubuntu-16.04'
 
 steps:
+- script: |
+    sudo add-apt-repository ppa:openjdk-r/ppa
+    sudo apt-get update
+    sudo apt-get install openjdk-11-jdk
+    sudo apt install openjfx
+    sudo update-alternatives --set java /usr/lib/jvm/java-11-openjdk-amd64/bin/java
 - task: Maven@3
   inputs:
     mavenPomFile: 'pom.xml'
     mavenOptions: '-Xmx3072m'
     javaHomeOption: 'JDKVersion'
-    jdkVersionOption: '1.8'
+    jdkVersionOption: '1.11'
     jdkArchitectureOption: 'x64'
     publishJUnitResults: true
     testResultsFiles: '**/surefire-reports/TEST-*.xml'
