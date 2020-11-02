@@ -23,12 +23,16 @@ package org.dockfx;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BiConsumer;
 
 import com.sun.javafx.css.StyleManager;
 
+import com.sun.javafx.scene.NodeHelper;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
@@ -39,12 +43,15 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Popup;
+import javafx.stage.Stage;
+import javafx.stage.Window;
 import javafx.util.Duration;
 
 /**
@@ -58,7 +65,14 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
   /**
    * Package-private internal list of all DockPanes for event mouse picking.
    */
-  static List<DockPane> dockPanes = new ArrayList<DockPane>();
+  final static String DOCKFX_DOCKPANES_CONTEXT = "DOCKFX_DOCKPANES_CONTEXT";
+  public static List<DockPane> getDockPanes(Stage context) {
+    if(context.getOwner() != null) return getDockPanes((Stage) context.getOwner());
+    if(!context.getProperties().containsKey(DOCKFX_DOCKPANES_CONTEXT)) {
+      context.getProperties().put(DOCKFX_DOCKPANES_CONTEXT, new ArrayList<DockPane>());
+    }
+    return (List<DockPane>) context.getProperties().get(DOCKFX_DOCKPANES_CONTEXT);
+  }
 
   /**
    * The current root node of this dock pane's layout.
@@ -191,7 +205,6 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
    */
   public DockPane() {
     super();
-    DockPane.dockPanes.add(this);
 
     this.addEventHandler(DockEvent.ANY, this);
     this.addEventFilter(DockEvent.ANY, new EventHandler<DockEvent>() {
@@ -230,7 +243,19 @@ public class DockPane extends StackPane implements EventHandler<DockEvent> {
     KeyValue kv = new KeyValue(dockAreaIndicator.strokeDashOffsetProperty(), 12);
     KeyFrame kf = new KeyFrame(Duration.millis(500), kv);
     dockAreaStrokeTimeline.getKeyFrames().add(kf);
-    dockAreaStrokeTimeline.play();
+
+    NodeHelper.treeShowingProperty(this).addListener((p,o,n) -> {
+      if(n) {
+        DockPane.getDockPanes((Stage) this.getScene().getWindow()).add(this);
+        dockAreaStrokeTimeline.play();
+      } else {
+        dockAreaStrokeTimeline.stop();
+      }
+    });
+    if(NodeHelper.isTreeShowing(this)) {
+      DockPane.getDockPanes((Stage) this.getScene().getWindow()).add(this);
+      dockAreaStrokeTimeline.play();
+    }
 
     DockPosButton dockCenter = new DockPosButton(false, DockPos.CENTER);
     dockCenter.getStyleClass().add("dock-center");

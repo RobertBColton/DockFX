@@ -105,6 +105,18 @@ public class DockNode extends VBox implements EventHandler<MouseEvent> {
         borderPane.pseudoClassStateChanged(MAXIMIZED_PSEUDO_CLASS, get());
       }
 
+      Stage rootWindow = (Stage) stage;
+      while(rootWindow.getOwner() != null) {
+        rootWindow = (Stage) rootWindow.getOwner();
+      }
+      if(this.get()) {
+        stage.setX(rootWindow.getX());
+        stage.setY(rootWindow.getY());
+        stage.setWidth(rootWindow.getWidth());
+        stage.setHeight(rootWindow.getHeight());
+      }
+
+      /*
       stage.setMaximized(get());
 
       // TODO: This is a work around to fill the screen bounds and not overlap the task bar when 
@@ -123,7 +135,7 @@ public class DockNode extends VBox implements EventHandler<MouseEvent> {
 
         stage.setWidth(bounds.getWidth());
         stage.setHeight(bounds.getHeight());
-      }
+      }*/
     }
 
     @Override

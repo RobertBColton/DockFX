@@ -6,7 +6,7 @@
     <groupId>org.dockfx</groupId>
     <artifactId>dockfx</artifactId>
     <packaging>jar</packaging>
-    <version>0.4-SNAPSHOT</version>
+    <version>0.4.1-SNAPSHOT</version>
     <name>DockFX</name>
     <url>https://github.com/RobertBColton/DockFX.git</url>
 
@@ -16,10 +16,22 @@
         <netbeans.checkstyle.format>true</netbeans.checkstyle.format>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <fileExtensions>java, properties, xml</fileExtensions>
+        <jpro.version>2020.1.1-SNAPSHOT</jpro.version>
+        <javafx.version>15</javafx.version>
     </properties>
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>com.sandec.jpro</groupId>
+                <artifactId>jpro-maven-plugin</artifactId>
+                <version>${jpro.version}</version>
+                <configuration>
+                    <visible>false</visible>
+                    <mainClassName>org.dockfx.demo.DockFX</mainClassName>
+                    <openingPath>/</openingPath>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -71,8 +83,76 @@
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
+
     </build>
+
+    <distributionManagement>
+        <repository>
+            <id>bintray-sandec-repo</id>
+            <name>sandec-repo</name>
+            <url>https://api.bintray.com/maven/sandec/repo/dockfx/;publish=1</url>
+        </repository>
+    </distributionManagement>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>jpro - sandec repository</id>
+            <url>https://sandec.bintray.com/repo</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <repositories>
+        <repository>
+            <id>jpro - sandec repository</id>
+            <url>https://sandec.bintray.com/repo</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>${javafx.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-web</artifactId>
+            <version>${javafx.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-swing</artifactId>
+            <version>${javafx.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-fxml</artifactId>
+            <version>${javafx.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-media</artifactId>
+            <version>${javafx.version}</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
 
     <reporting>
         <plugins>

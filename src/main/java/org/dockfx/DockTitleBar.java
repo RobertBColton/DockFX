@@ -221,16 +221,20 @@ public class DockTitleBar extends HBox implements EventHandler<MouseEvent> {
    * @param eventTask The event task to be run when the event target is found.
    * @param explicit The explicit event to be fired on the stage root when no event target is found.
    */
-  private void pickEventTarget(Point2D location, EventTask eventTask, Event explicit) {
+  private void pickEventTarget(Point2D location, EventTask eventTask, Event explicit, Stage context) {
     // RFE for public scene graph traversal API filed but closed:
     // https://bugs.openjdk.java.net/browse/JDK-8133331
 
-    List<DockPane> dockPanes = DockPane.dockPanes;
+    List<DockPane> dockPanes = DockPane.getDockPanes(context);
 
     // fire the dock over event for the active stages
     for (DockPane dockPane : dockPanes) {
+      if(dockPane.getScene() == null) continue;
       Window window = dockPane.getScene().getWindow();
       if (!(window instanceof Stage)) continue;
+      if (!window.isShowing()) {
+        continue;
+      }
       Stage targetStage = (Stage) window;
 
       // obviously this title bar does not need to receive its own events
@@ -396,7 +400,7 @@ public class DockTitleBar extends HBox implements EventHandler<MouseEvent> {
       };
 
       this.pickEventTarget(new Point2D(event.getScreenX(), event.getScreenY()), eventTask,
-          dockExitEvent);
+          dockExitEvent, stage);
     } else if (event.getEventType() == MouseEvent.MOUSE_RELEASED) {
       dragging = false;
 
@@ -415,7 +419,7 @@ public class DockTitleBar extends HBox implements EventHandler<MouseEvent> {
         }
       };
 
-      this.pickEventTarget(new Point2D(event.getScreenX(), event.getScreenY()), eventTask, null);
+      this.pickEventTarget(new Point2D(event.getScreenX(), event.getScreenY()), eventTask, null, dockNode.getStage());
 
       dragNodes.clear();
 
