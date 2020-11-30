@@ -409,7 +409,7 @@ public class DockTitleBar extends HBox implements EventHandler<MouseEvent> {
         }
       };
 
-      this.pickEventTarget(new Point2D(event.getScreenX(), event.getScreenY()), eventTask, null, dockNode.getStage());
+      this.pickEventTarget(new Point2D(event.getScreenX(), event.getScreenY()), eventTask, null, (Stage) this.getScene().getWindow());
 
       dragNodes.clear();
 
