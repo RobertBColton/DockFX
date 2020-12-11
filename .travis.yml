@@ -1,0 +1,14 @@
+# don't build "feature" branches
+branches:
+  only:
+    - "master"
+# obviously this is java
+language: java
+
+os: linux
+dist: trusty
+jdk:
+  - oraclejdk8
+
+script:
+  - mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
